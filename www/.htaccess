@@ -1,0 +1,8 @@
+
+RewriteEngine on
+RewriteBase /
+
+DirectoryIndex index.html index.htm
+
+RewriteCond %{REQUEST_URI} ^/hook$
+RewriteRule (.*) /hook.html [L,QSA]
