@@ -53,12 +53,12 @@ locals
             $parsekitConfig.source[
                 $.type[git]
                 $.url[$data.repository.clone_url]
-                $.reference[$hash]
+                $.reference[$sha]
             ]
             $parsekitConfig.dist[
                 $.type[zip]
-                $.url[https://api.github.com/repos/ln-e/debug/zipball/$hash]
-                $.reference[$hash]
+                $.url[https://api.github.com/repos/ln-e/debug/zipball/$sha]
+                $.reference[$sha]
                 $.shasum[]
             ]
             $fileData.packages.[$packageName].$name[$parsekitConfig]

@@ -11,12 +11,12 @@
 				"source":{
 					"type":"git",
 					"url":"https:\/\/github.com\/ln-e\/debug.git",
-					"reference":null
+					"reference":"b7d00f53c040cf3c568be1a71ee853c0516f13a2"
 				},
 				"dist":{
 					"type":"zip",
-					"url":"https:\/\/api.github.com\/repos\/ln-e\/debug\/zipball\/",
-					"reference":null,
+					"url":"https:\/\/api.github.com\/repos\/ln-e\/debug\/zipball\/b7d00f53c040cf3c568be1a71ee853c0516f13a2",
+					"reference":"b7d00f53c040cf3c568be1a71ee853c0516f13a2",
 					"shasum":""
 				}
 			},
@@ -30,12 +30,12 @@
 				"source":{
 					"type":"git",
 					"url":"https:\/\/github.com\/ln-e\/debug.git",
-					"reference":null
+					"reference":"2e69163c219629dd13ea5331784bd8900692ff07"
 				},
 				"dist":{
 					"type":"zip",
-					"url":"https:\/\/api.github.com\/repos\/ln-e\/debug\/zipball\/",
-					"reference":null,
+					"url":"https:\/\/api.github.com\/repos\/ln-e\/debug\/zipball\/2e69163c219629dd13ea5331784bd8900692ff07",
+					"reference":"2e69163c219629dd13ea5331784bd8900692ff07",
 					"shasum":""
 				}
 			},
@@ -49,12 +49,12 @@
 				"source":{
 					"type":"git",
 					"url":"https:\/\/github.com\/ln-e\/debug.git",
-					"reference":null
+					"reference":"5c67ecdd8268660cf9446feb9b9c1478962ec05d"
 				},
 				"dist":{
 					"type":"zip",
-					"url":"https:\/\/api.github.com\/repos\/ln-e\/debug\/zipball\/",
-					"reference":null,
+					"url":"https:\/\/api.github.com\/repos\/ln-e\/debug\/zipball\/5c67ecdd8268660cf9446feb9b9c1478962ec05d",
+					"reference":"5c67ecdd8268660cf9446feb9b9c1478962ec05d",
 					"shasum":""
 				}
 			},
@@ -68,12 +68,12 @@
 				"source":{
 					"type":"git",
 					"url":"https:\/\/github.com\/ln-e\/debug.git",
-					"reference":null
+					"reference":"193ef2bcf0613c923f757cc166d06d6f9f956502"
 				},
 				"dist":{
 					"type":"zip",
-					"url":"https:\/\/api.github.com\/repos\/ln-e\/debug\/zipball\/",
-					"reference":null,
+					"url":"https:\/\/api.github.com\/repos\/ln-e\/debug\/zipball\/193ef2bcf0613c923f757cc166d06d6f9f956502",
+					"reference":"193ef2bcf0613c923f757cc166d06d6f9f956502",
 					"shasum":""
 				}
 			},
@@ -87,12 +87,12 @@
 				"source":{
 					"type":"git",
 					"url":"https:\/\/github.com\/ln-e\/debug.git",
-					"reference":null
+					"reference":"b7d00f53c040cf3c568be1a71ee853c0516f13a2"
 				},
 				"dist":{
 					"type":"zip",
-					"url":"https:\/\/api.github.com\/repos\/ln-e\/debug\/zipball\/",
-					"reference":null,
+					"url":"https:\/\/api.github.com\/repos\/ln-e\/debug\/zipball\/b7d00f53c040cf3c568be1a71ee853c0516f13a2",
+					"reference":"b7d00f53c040cf3c568be1a71ee853c0516f13a2",
 					"shasum":""
 				}
 			}
