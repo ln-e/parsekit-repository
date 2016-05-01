@@ -7,6 +7,7 @@
 				"require":{
 					"parser":">=3.4.3"
 				},
+				"name":"ln-e\/debug",
 				"uid":1,
 				"source":{
 					"type":"git",
@@ -26,6 +27,7 @@
 				"require":{
 					"parser":">=3.4.3"
 				},
+				"name":"ln-e\/debug",
 				"uid":1,
 				"source":{
 					"type":"git",
@@ -45,6 +47,7 @@
 				"require":{
 					"parser":">=3.4.3"
 				},
+				"name":"ln-e\/debug",
 				"uid":1,
 				"source":{
 					"type":"git",
@@ -63,6 +66,7 @@
 				"require":{
 					"parser":">=3.4.3"
 				},
+				"name":"ln-e\/debug",
 				"uid":1,
 				"version":"v0.1-beta",
 				"source":{
@@ -83,6 +87,7 @@
 				"require":{
 					"parser":">=3.4.3"
 				},
+				"name":"ln-e\/debug",
 				"uid":1,
 				"source":{
 					"type":"git",

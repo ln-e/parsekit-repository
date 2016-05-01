@@ -48,6 +48,7 @@ locals
         }{
 
             $parsekitConfig[^self.getParkitFile[$data;$sha]]
+            $parsekitConfig.name[$packageName]
             $parsekitConfig.uid(1)
             $parsekitConfig.version[^if(^ref.ref.pos[refs/tags/master] != -1){dev-master}{$name}]
             $parsekitConfig.source[
