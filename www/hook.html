@@ -1,150 +1,16 @@
 ^use[Debug.p]
-^use[Utils.p]
+^use[App/Controller/HookController.p]
 
-#$data[^json:parse[^taint[as-is][$request:body]]]
-$var[    {
-      "zen": "Design for failure.",
-      "hook_id": 8245967,
-      "hook": {
-        "type": "Repository",
-        "id": 8245967,
-        "name": "web",
-        "active": true,
-        "events": [
-          "create",
-          "delete",
-          "push",
-          "release"
-        ],
-        "config": {
-          "content_type": "form",
-          "insecure_ssl": "0",
-          "url": "http://igor.bodnar.ws/hook.html"
-        },
-        "updated_at": "2016-04-30T20:39:42Z",
-        "created_at": "2016-04-30T20:39:42Z",
-        "url": "https://api.github.com/repos/ln-e/debug/hooks/8245967",
-        "test_url": "https://api.github.com/repos/ln-e/debug/hooks/8245967/test",
-        "ping_url": "https://api.github.com/repos/ln-e/debug/hooks/8245967/pings",
-        "last_response": {
-          "code": null,
-          "status": "unused",
-          "message": null
-        }
-      },
-      "repository": {
-        "id": 54072182,
-        "name": "debug",
-        "full_name": "ln-e/debug",
-        "owner": {
-          "login": "ln-e",
-          "id": 2379195,
-          "avatar_url": "https://avatars.githubusercontent.com/u/2379195?v=3",
-          "gravatar_id": "",
-          "url": "https://api.github.com/users/ln-e",
-          "html_url": "https://github.com/ln-e",
-          "followers_url": "https://api.github.com/users/ln-e/followers",
-          "following_url": "https://api.github.com/users/ln-e/following{/other_user}",
-          "gists_url": "https://api.github.com/users/ln-e/gists{/gist_id}",
-          "starred_url": "https://api.github.com/users/ln-e/starred{/owner}{/repo}",
-          "subscriptions_url": "https://api.github.com/users/ln-e/subscriptions",
-          "organizations_url": "https://api.github.com/users/ln-e/orgs",
-          "repos_url": "https://api.github.com/users/ln-e/repos",
-          "events_url": "https://api.github.com/users/ln-e/events{/privacy}",
-          "received_events_url": "https://api.github.com/users/ln-e/received_events",
-          "type": "User",
-          "site_admin": false
-        },
-        "private": false,
-        "html_url": "https://github.com/ln-e/debug",
-        "description": "test package for parsekit",
-        "fork": false,
-        "url": "https://api.github.com/repos/ln-e/debug",
-        "forks_url": "https://api.github.com/repos/ln-e/debug/forks",
-        "keys_url": "https://api.github.com/repos/ln-e/debug/keys{/key_id}",
-        "collaborators_url": "https://api.github.com/repos/ln-e/debug/collaborators{/collaborator}",
-        "teams_url": "https://api.github.com/repos/ln-e/debug/teams",
-        "hooks_url": "https://api.github.com/repos/ln-e/debug/hooks",
-        "issue_events_url": "https://api.github.com/repos/ln-e/debug/issues/events{/number}",
-        "events_url": "https://api.github.com/repos/ln-e/debug/events",
-        "assignees_url": "https://api.github.com/repos/ln-e/debug/assignees{/user}",
-        "branches_url": "https://api.github.com/repos/ln-e/debug/branches{/branch}",
-        "tags_url": "https://api.github.com/repos/ln-e/debug/tags",
-        "blobs_url": "https://api.github.com/repos/ln-e/debug/git/blobs{/sha}",
-        "git_tags_url": "https://api.github.com/repos/ln-e/debug/git/tags{/sha}",
-        "git_refs_url": "https://api.github.com/repos/ln-e/debug/git/refs{/sha}",
-        "trees_url": "https://api.github.com/repos/ln-e/debug/git/trees{/sha}",
-        "statuses_url": "https://api.github.com/repos/ln-e/debug/statuses/{sha}",
-        "languages_url": "https://api.github.com/repos/ln-e/debug/languages",
-        "stargazers_url": "https://api.github.com/repos/ln-e/debug/stargazers",
-        "contributors_url": "https://api.github.com/repos/ln-e/debug/contributors",
-        "subscribers_url": "https://api.github.com/repos/ln-e/debug/subscribers",
-        "subscription_url": "https://api.github.com/repos/ln-e/debug/subscription",
-        "commits_url": "https://api.github.com/repos/ln-e/debug/commits{/sha}",
-        "git_commits_url": "https://api.github.com/repos/ln-e/debug/git/commits{/sha}",
-        "comments_url": "https://api.github.com/repos/ln-e/debug/comments{/number}",
-        "issue_comment_url": "https://api.github.com/repos/ln-e/debug/issues/comments{/number}",
-        "contents_url": "https://api.github.com/repos/ln-e/debug/contents/{+path}",
-        "compare_url": "https://api.github.com/repos/ln-e/debug/compare/{base}...{head}",
-        "merges_url": "https://api.github.com/repos/ln-e/debug/merges",
-        "archive_url": "https://api.github.com/repos/ln-e/debug/{archive_format}{/ref}",
-        "downloads_url": "https://api.github.com/repos/ln-e/debug/downloads",
-        "issues_url": "https://api.github.com/repos/ln-e/debug/issues{/number}",
-        "pulls_url": "https://api.github.com/repos/ln-e/debug/pulls{/number}",
-        "milestones_url": "https://api.github.com/repos/ln-e/debug/milestones{/number}",
-        "notifications_url": "https://api.github.com/repos/ln-e/debug/notifications{?since,all,participating}",
-        "labels_url": "https://api.github.com/repos/ln-e/debug/labels{/name}",
-        "releases_url": "https://api.github.com/repos/ln-e/debug/releases{/id}",
-        "deployments_url": "https://api.github.com/repos/ln-e/debug/deployments",
-        "created_at": "2016-03-16T22:53:22Z",
-        "updated_at": "2016-03-16T22:56:25Z",
-        "pushed_at": "2016-04-30T14:35:24Z",
-        "git_url": "git://github.com/ln-e/debug.git",
-        "ssh_url": "git@github.com:ln-e/debug.git",
-        "clone_url": "https://github.com/ln-e/debug.git",
-        "svn_url": "https://github.com/ln-e/debug",
-        "homepage": null,
-        "size": 2,
-        "stargazers_count": 0,
-        "watchers_count": 0,
-        "language": "OpenEdge ABL",
-        "has_issues": true,
-        "has_downloads": true,
-        "has_wiki": true,
-        "has_pages": false,
-        "forks_count": 0,
-        "mirror_url": null,
-        "open_issues_count": 0,
-        "forks": 0,
-        "open_issues": 0,
-        "watchers": 0,
-        "default_branch": "master"
-      },
-      "sender": {
-        "login": "ln-e",
-        "id": 2379195,
-        "avatar_url": "https://avatars.githubusercontent.com/u/2379195?v=3",
-        "gravatar_id": "",
-        "url": "https://api.github.com/users/ln-e",
-        "html_url": "https://github.com/ln-e",
-        "followers_url": "https://api.github.com/users/ln-e/followers",
-        "following_url": "https://api.github.com/users/ln-e/following{/other_user}",
-        "gists_url": "https://api.github.com/users/ln-e/gists{/gist_id}",
-        "starred_url": "https://api.github.com/users/ln-e/starred{/owner}{/repo}",
-        "subscriptions_url": "https://api.github.com/users/ln-e/subscriptions",
-        "organizations_url": "https://api.github.com/users/ln-e/orgs",
-        "repos_url": "https://api.github.com/users/ln-e/repos",
-        "events_url": "https://api.github.com/users/ln-e/events{/privacy}",
-        "received_events_url": "https://api.github.com/users/ln-e/received_events",
-        "type": "User",
-        "site_admin": false
-      }
-    }
+$eventType[$request:headers.[X_GITHUB_EVENT]]
+#$eventType[push]
+$controller[^HookController::create[]]
 
-]
-$data[^json:parse[^taint[as-is][$var]]]
-
-$utils[^Utils::create[]]
-^utils.handleData[$data]
+^switch[$eventType]{
+    ^case[push]{^controller.hookAction[$data]}
+    ^case[delete]{}
+    ^case[create]{}
+    ^case[release]{}
+    ^case[ping]{^controller.createPackageAction[$data]}
+}
 
 done.

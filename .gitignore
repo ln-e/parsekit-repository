@@ -1,0 +1,4 @@
+cgi/*
+data/.htpasswd
+www/**/*.json
+!*.example

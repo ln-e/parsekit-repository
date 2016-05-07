@@ -1,3 +1,5 @@
+AddHandler parsed-html html
+Action parsed-html /cgi-bin/parsekit.parser3.cgi
 
 RewriteEngine on
 RewriteBase /
