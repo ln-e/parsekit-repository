@@ -1,4 +1,7 @@
 cgi/*
 data/.htpasswd
+data/*.dir
+data/*.pag
 www/**/*.json
 !*.example
+debug.htm

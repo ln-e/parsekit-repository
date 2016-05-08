@@ -6,5 +6,5 @@ RewriteBase /
 
 DirectoryIndex index.html index.htm
 
-RewriteCond %{REQUEST_URI} ^/hook$
-RewriteRule (.*) /hook.html [L,QSA]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule (.*) /_app.html?request=$1 [L,QSA]

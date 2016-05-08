@@ -10,6 +10,9 @@ HookController
 @OPTIONS
 locals
 
+@BASE
+BaseController
+
 @auto[]
 ###
 
@@ -17,7 +20,19 @@ locals
 ###
 
 
-@hookAction[debugData]
+@chooseActionByType[type]
+    ^switch[$type]{
+        ^case[push]{^self.hookAction[$data]}
+        ^case[delete]{^throw[ActionNotImplementedException;; Delete hook action not implemented yet]}
+        ^case[create]{^throw[ActionNotImplementedException;; Create hook action not implemented yet]}
+        ^case[release]{^throw[ActionNotImplementedException;; Relase hookaction not implemented yet]}
+        ^case[ping]{^self.createPackageAction[$data]}
+        ^case[DEFAULT]{^throw[ActionNotImplementedException;; Unknown hook type $type]}
+    }
+###
+
+
+@hookAction[debugData][result]
     $data[^json:parse[^taint[as-is][^if(def $debugData){$debugData}{$request:body}]]]
 
     $packageName[$data.repository.full_name]
@@ -116,29 +131,4 @@ locals
     }
     $result[^url.match[({\D+})][gi]{}]
     $result[^taint[as-is][$result]]
-###
-
-
-@getParkitFile[name;sha][result]
-    $result[^self.parseJson[https://raw.githubusercontent.com/$name/$sha/parsekit.json]]
-###
-
-
-@parseJson[url;local][result]
-    $file[^self.load[$url]($local)]
-    $result[^json:parse[^taint[as-is][$file.text]]]
-###
-
-
-@load[url;local][result]
-    ^if($local){
-        $result[^file::load[text;$url]]
-    }{
-        $result[^curl:load[
-            $.url[^taint[as-is][$url]]
-            $.useragent[parsekit]
-            $.timeout(20)
-            $.ssl_verifypeer(0)
-        ]]
-    }
 ###

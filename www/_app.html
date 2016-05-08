@@ -1,0 +1,23 @@
+^switch[$form:fields.request]{
+    ^case[hook]{
+        $eventType[$request:headers.[X_GITHUB_EVENT]]
+        $controller[^HookController::create[]]
+        ^controller.chooseActionByType[$eventType]
+    }
+    ^case[login]{
+        $controller[^UserController::create[]]
+        ^controller.loginAction[]
+    }
+    ^case[package]{
+        $controller[^PackagesController::create[]]
+        ^controller.showAction[]
+    }
+    ^case[package/add]{
+        $controller[^PackagesController::create[]]
+        ^controller.addAction[]
+    }
+    ^case[DEFAULT]{
+        ^throw[RouteNotFoundException;; Route for $form:fields.request not found.]
+    }
+
+}
