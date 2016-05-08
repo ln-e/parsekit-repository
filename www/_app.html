@@ -1,5 +1,20 @@
+$routes[
+    $.package[^Route::create[packages]]
+]
+$matcher[^Matcher::create[$routes]]
+
+^dstop[^matcher.match[packages]]
+
+
 ^switch[$form:fields.request]{
     ^case[]{
+    }
+    ^case[test]{
+        $text[1234567890]
+        ^dstop[^text.mid(0;^text.length[]-1)]
+        $pattern[/hello{id}/kitty/{name}]
+        $matches[^pattern.match[{(\w+)}][gi']]
+        ^dstop[$matches]
     }
     ^case[hook]{
         $eventType[$request:headers.[X_GITHUB_EVENT]]
