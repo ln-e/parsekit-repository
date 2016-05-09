@@ -17,28 +17,29 @@ BaseController
 ###
 
 @create[]
+    $self.githubApi[^GithubApi::create[]]
 ###
 
 
 @chooseActionByType[type]
     ^switch[$type]{
-        ^case[push]{^self.hookAction[$data]}
-        ^case[delete]{^throw[ActionNotImplementedException;; Delete hook action not implemented yet]}
-        ^case[create]{^throw[ActionNotImplementedException;; Create hook action not implemented yet]}
-        ^case[release]{^throw[ActionNotImplementedException;; Relase hookaction not implemented yet]}
-        ^case[ping]{^self.createPackageAction[$data]}
-        ^case[DEFAULT]{^throw[ActionNotImplementedException;; Unknown hook type $type]}
+        ^case[push]{^self.pushAction[]}
+        ^case[delete]{^throw[ActionNotImplementedException;;Delete hook action not implemented yet]}
+        ^case[create]{^throw[ActionNotImplementedException;;Create hook action not implemented yet]}
+        ^case[release]{^throw[ActionNotImplementedException;;Relase hookaction not implemented yet]}
+        ^case[ping]{^self.checkAllPackageVersionAction[]}
+        ^case[DEFAULT]{^throw[ActionNotImplementedException;;Unknown hook type $type]}
     }
 ###
 
 
-@hookAction[debugData][result]
-    $data[^json:parse[^taint[as-is][^if(def $debugData){$debugData}{$request:body}]]]
+@pushAction[][result]
+    $data[^json:parse[^taint[as-is][$request:body]]]
 
     $packageName[$data.repository.full_name]
     $ref[$data.ref]
-    $name[^ref.ref.match[(refs\/(?:heads|tags)\/)][gi]{}]
-    $sha[$ref.object.sha]
+    $sha[$data.after]
+    $name[^ref.match[(refs\/(?:heads|tags)\/)][gi]{}]
 
     ^if(-f '/p/${packageName}.json' ){
         $fileData[^self.parseJson[/p/${packageName}.json](true)]
@@ -64,8 +65,8 @@ BaseController
 ###
 
 
-@createPackageAction[debugData]
-    $data[^json:parse[^taint[as-is][^if(def $debugData){$debugData}{$request:body}]]]
+@checkAllPackageVersionAction[]
+    $data[^json:parse[^taint[as-is][$request:body]]]
     $packageName[$data.repository.full_name]
 
     ^if(-f '/p/${packageName}.json' ){
@@ -103,11 +104,11 @@ BaseController
 
 
 @createPackageConfig[data;packageName;sha;ref;name][result]
-    $parsekitConfig[^self.getParkitFile[$packageName;$sha]]
+    $parsekitConfig[^self.githubApi.getParsekitFile[$packageName;$sha]]
     $parsekitConfig.name[$packageName]
     $parsekitConfig.targetDir[$packageName]
     $parsekitConfig.uid(1)
-    $parsekitConfig.version[^if(^ref.ref.pos[refs/heads/master] != -1){dev-master}{$name}]
+    $parsekitConfig.version[^if(^ref.pos[refs/heads/master] != -1){dev-master}{$name}]
     $parsekitConfig.source[
         $.type[git]
         $.url[$data.repository.clone_url]

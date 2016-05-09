@@ -16,10 +16,17 @@ BaseController
 @auto[]
     $self.security[^Security::create[]]
     $self.session[^Session::create[]]
+    $self.githubApi[^GithubApi::create[]]
 ###
 
 
 @create[]
+###
+
+
+@logoutAction[][result]
+    $self.session.userID[]
+    ^self.redirect[/login]
 ###
 
 
@@ -33,19 +40,7 @@ BaseController
         ^if(!def $form:fields.code){
             $transformedDoc[^doc.transform[../data/templates/auth.xsl]]
         }{
-            $file[^curl:load[
-                $.url[https://github.com/login/oauth/access_token]
-                $.useragent[parsekit]
-                $.timeout(10)
-                $.ssl_verifypeer(0)
-                $.post(1)
-                $.httpheader[
-                    $.accept[application/json]
-                ]
-                $.postfields[client_id=e0a9aa67dbb28d792909&client_secret=899d80953ed8e459cd65424fc7d158bc4db3f58f&code=$form:fields.code]
-            ]]
-
-            $data[^json:parse[^taint[as-is][$file.text]]]
+            $data[^githubApi.getToken[$form:fields.code]]
 
             ^if(def $data.error){
                 $error[^doc.createElement[error]]
@@ -56,17 +51,8 @@ BaseController
                 $transformedDoc[^doc.transform[../data/templates/auth.xsl]]
             }{
                 $access_token[$data.access_token]
-                $file[^curl:load[
-                    $.url[https://api.github.com/user]
-                    $.useragent[parsekit]
-                    $.timeout(10)
-                    $.ssl_verifypeer(0)
-                    $.httpheader[
-                        $.Authorization[token $access_token]
-                    ]
-                ]]
-
-                $githubUserData[^json:parse[^taint[as-is][$file.text]]]
+                $self.githubApi.access_token[$access_token]
+                $githubUserData[^self.githubApi.getUser[]]
 
                 ^connect[$MAIN:SQL.connect-string]{
                     $table[^table::sql{
@@ -95,13 +81,6 @@ BaseController
         }
 
 
-       ^if(def $transformedDoc){
-            $result[^transformedDoc.string[
-                $.method[html]
-            ]]
-       }{
-            $result[]
-       }
-
+        $result[^if(!def $transformedDoc){}{^transformedDoc.string[$.method[html]]}]
     }
 ###

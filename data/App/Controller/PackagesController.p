@@ -15,6 +15,7 @@ BaseController
 
 @auto[]
     $self.security[^Security::create[]]
+    $self.githubApi[^GithubApi::create[]]
 ###
 
 @create[]
@@ -53,13 +54,7 @@ BaseController
 
     $transformedDoc[^doc.transform[../data/templates/packages/show.xsl]]
 
-    ^if(def $transformedDoc){
-        $result[^transformedDoc.string[
-            $.method[html]
-        ]]
-    }{
-        $result[]
-    }
+    $result[^if(!def $transformedDoc){}{^transformedDoc.string[$.method[html]]}]
 ###
 
 
@@ -67,37 +62,19 @@ BaseController
     ^if(!^self.security.isGranted[]){
         ^self.redirect[/login]
     }{
-
-        $data[{"name": "web","active": true,"events": ["create","delete","push","release"],"config": {"url": "http://parsekit.ru/hook","content_type": "json"}}]
-        $name[^taint[as-is][$form:fields.package]]
-        $parsekit[^self.getParkitFile[$name;master]]
-
-
         $user[^self.security.getUser[]]
+        $packageName[^taint[as-is][$form:fields.package]]
+        $hookData[^self.githubApi.createRepoHook[$packageName]]
+        $parsekit[^self.githubApi.getParsekitFile[$packageName;master]]
 
-        $file[^curl:load[
-            $.url[https://api.github.com/repos/$name/hooks]
-            $.useragent[parsekit]
-            $.timeout(10)
-            $.ssl_verifypeer(0)
-            $.httpheader[
-                $.Authorization[token $user.github_token]
-                $.accept[application/json]
-            ]
-            $.post(1)
-            $.postfields[$data]
-        ]]
-
-        $hookData[^json:parse[^taint[as-is][$file.text]]]
         ^if(!def $hookData.id){
-            ^throw[CouldNotCreateHookException;;Hook creation failed: $file.text]
+            ^throw[CouldNotCreateHookException;;Hook creation failed: ^json:string[$hookData]]
         }
 
-
-        $readmeFile[^self.load[https://raw.githubusercontent.com/$name/master/README.md]]
+        $readmeFile[^self.githubApi.getSourceFile[$packageName;master;README.md]]
 
         ^connect[$MAIN:SQL.connect-string]{
-            $packageName[^if(!def $parsekit.name || ^parsekit.name.trim[] eq ''){$name}{$parsekit.name}]
+            $packageName[^if(!def $parsekit.name || ^parsekit.name.trim[] eq ''){$packageName}{$parsekit.name}]
             $r[^void:sql{
                 INSERT INTO package(hook_id,name,target_dir,type,description,keywords,readme)
                 VALUES(
@@ -106,7 +83,7 @@ BaseController
                     '$packageName',
                     '$parsekit.type',
                     '$parsekit.description',
-                    '^if($parsekit.keywords is hash){^parsekit.keywords.foreach[i;keyword]{$keyword}[, ]}{ }',
+                    '^if($parsekit.keywords is hash){^parsekit.keywords.foreach[i;keyword]{$keyword}[,]}{ }',
                     '$readmeFile.text'
                 )
             }]
@@ -119,17 +96,7 @@ BaseController
             }]
         }
 
-        $ping[^curl:load[
-            $.url[^taint[as-is][$hookData.ping_url]]
-            $.useragent[parsekit]
-            $.timeout(10)
-            $.ssl_verifypeer(0)
-            $.httpheader[
-                $.Authorization[token $user.github_token]
-                $.accept[application/json]
-            ]
-            $.post(1)
-        ]]
+        ^self.githubApi.ping[$packageName;$hookData.id]
 
         ^self.redirect[/package]
     }

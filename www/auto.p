@@ -8,6 +8,7 @@
     ^use[Debug.p]
     ^use[Session.p]
     ^use[Security.p]
+    ^use[App/Model/GithubApi.p]
     ^use[App/Controller/BaseController.p]
     ^use[App/Controller/HookController.p]
     ^use[App/Controller/UserController.p]

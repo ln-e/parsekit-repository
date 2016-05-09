@@ -55,6 +55,9 @@
                 <li>
                     <a href="/login">Login</a>
                 </li>
+                <li>
+                    <a href="/logout">Logout</a>
+                </li>
             </ul>
             <a href="#offcanvas" class="uk-navbar-toggle uk-visible-small" data-uk-offcanvas=""></a>
             <div class="uk-navbar-brand uk-navbar-center uk-visible-small">Parsekit</div>

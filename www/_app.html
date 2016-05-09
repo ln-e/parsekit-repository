@@ -1,4 +1,6 @@
 ^switch[$form:fields.request]{
+    ^case[]{
+    }
     ^case[hook]{
         $eventType[$request:headers.[X_GITHUB_EVENT]]
         $controller[^HookController::create[]]
@@ -7,6 +9,10 @@
     ^case[login]{
         $controller[^UserController::create[]]
         ^controller.loginAction[]
+    }
+    ^case[logout]{
+        $controller[^UserController::create[]]
+        ^controller.logoutAction[]
     }
     ^case[package]{
         $controller[^PackagesController::create[]]

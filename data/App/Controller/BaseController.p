@@ -32,10 +32,6 @@ locals
 ###
 
 
-@getParkitFile[name;sha][result]
-    $result[^self.parseJson[https://raw.githubusercontent.com/$name/$sha/parsekit.json]]
-###
-
 
 @load[url;local][result]
     ^if(def $local && $local){
