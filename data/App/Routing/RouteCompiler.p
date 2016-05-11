@@ -108,7 +108,7 @@ locals
         ]
     }
 
-    $firstOptional(inf)
+    $firstOptional(999999)
     ^if(!$isHost){
         $i(^tokens._count[])
         ^while($i >= 0){
