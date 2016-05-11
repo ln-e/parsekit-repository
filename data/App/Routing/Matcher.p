@@ -46,22 +46,36 @@ locals
 
 @matchCollection[path;routes][result]
     ^routes.foreach[name;route]{
+
         $compiledRoute[^route.compile[]]
 
         ^if(def $compiledRoute.staticPrefix && ^path.pos[$compiledRoute.staticPrefix] != 0){
             ^continue[]
         }
 
-        $matches[^path.match[$compiledRoute.regex][$compiledRoute.regexModefiers]]
-        ^if(!def $matches){
+        $matchesTable[^path.match[^apply-taint[$compiledRoute.regex]][$compiledRoute.regexModefiers]]
+        ^if(!def $matchesTable){
             ^continue[]
+        }
+        $matches[^hash::create[]]
+        $i(0)
+        ^compiledRoute.matchesOrder.foreach[matchName;value]{
+            ^i.inc[]
+            $matches.$matchName[$matchesTable.$i]
         }
 
         ^if(def $compiledRoute.hostRegex){
-            $hostMatches[^env:fields.SERVER_NAME.match[$compiledRoute.hostRegex]]
-            ^if(!def $hostMatches){
+            $hostMatchesTable[^env:fields.SERVER_NAME.match[^apply-taint[$compiledRoute.hostRegex]]]
+            ^if(!def $hostMatchesTable){
                 ^continue[]
             }
+            $i(0)
+            ^compiledRoute.hostMatchesOrder.foreach[matchName;value]{
+                ^i.inc[]
+                $hostMatches.$matchName[$hostMatchesTable.$i]
+            }
+        }{
+            $hostMatches[^hash::create[]]
         }
 
 

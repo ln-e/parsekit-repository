@@ -31,12 +31,14 @@ locals
     $hostTokens[^hash::create[]]
     $host[$route.host]
 
+    $hostMatchesOrder[^hash::create[]]
     ^if('' ne $host){
         $tempResult[^self.compilePattern[$route;$host](true)]
         $hostVariables[$tempResult.variables]
         $variables[$hostVariables]
         $hostTokens[$tempResult.tokens]
         $hostRegex[$tempResult.regex]
+        $hostMatchesOrder[$tempResult.matchesOrder]
     }
     $path[$route.path]
     $tempResult[^self.compilePattern[$route;$path](false)]
@@ -45,8 +47,9 @@ locals
     ^variables.add[$pathVariables]
     $tokens[$tempResult.tokens]
     $regex[$tempResult.regex]
+    $matchesOrder[$tempResult.matchesOrder]
 
-    $result[^CompiledRoute::create[$staticPrefix;$regex;$tokens;$pathVariables;$hostRegex;$hostTokens;$hostVariables;$variables]]
+    $result[^CompiledRoute::create[$staticPrefix;$regex;$tokens;$pathVariables;$hostRegex;$hostTokens;$hostVariables;$variables;$matchesOrder;$hostMatchesOrder]]
 ###
 
 
@@ -59,10 +62,10 @@ locals
     $matches[^pattern.match[({(\w+)})][gi']]
 
     ^matches.menu{
-        $varName[$matches.1]
+        $varName[^matches.1.mid(1;^matches.1.length[]-2)]
         $precedingText[^pattern.mid($pos;^matches.prematch.length[] - $pos)]
         $pos(^matches.prematch.length[] + ^matches.match.length[])
-        $precedingChar[^matches.prematch.mid(0;1)]
+        $precedingChar[^if(^precedingText.length[] > 0){^precedingText.mid(^precedingText.length[]-1;1)}{}]
         $isSeparator(^self.SEPARATORS.pos[$precedingChar])
 
         ^if(^variables.contains[$varName]){
@@ -86,7 +89,7 @@ locals
         ^if(!def $regexp){
             $nextSeparator[^self.findNextSeparator[$matches.postmatch]]
 #           All except separators regex
-            $regexp[^[^^^taint[regex][$defaultSeparator]^taint[regex][^if($defaultSeparator ne $nextSeparator){$nextSeparator}{}]^]+]
+            $regexp[^[^^^taint[regex][$defaultSeparator]^if($defaultSeparator ne $nextSeparator){^taint[regex][$nextSeparator]}{}^]+]
         }
 
         $tokens.[^tokens._count[]][
@@ -95,7 +98,7 @@ locals
             $.2[$regexp]
             $.3[$varName]
         ]
-        $variables.[^variables.count[]][$varName]
+        $variables.[^variables._count[]][$varName]
     }
 
     ^if($pos < ^pattern.length[]){
@@ -123,8 +126,9 @@ locals
 
     $i(0)
     $nbToken(^tokens._count[])
+    $matchesOrder[^hash::create[]]
     ^while($i<$nbToken){
-        $regexp[$regexp^self.computeRegexp[$tokens;$i;$firstOptional]]
+        $regexp[$regexp^self.computeRegexp[$tokens;$i;$firstOptional;$matchesOrder]]
         ^i.inc[]
     }
 
@@ -134,6 +138,7 @@ locals
         $.regexModifiers[s^if($isHost){i}{}]
         $.tokens[array_reverse($tokens)]
         $.variables[$variables]
+        $.matchesOrder[$matchesOrder]
     ]
 ###
 
@@ -150,26 +155,27 @@ locals
 ###
 
 
-@computeRegexp[tokens;index;firstOptional][result]
+@computeRegexp[tokens;index;firstOptional;matchesOrder][result]
     $token[$tokens.$index]
     ^if('text' eq $token.0){
         $result[^taint[regex][$token.1]]
     }{
         ^if(0 == $index && 0 == $firstOptional){
 #           When the only token is an optional variable token, the separator is required
-            $result[^taint[regex][$token.1^(?P<$token.3>$token.2)?]]
+            $result[^taint[regex][$token.1]^(?P<$token.3>$token.2)?]
+#           Until named group is not supported
+            $matchesOrder.[$token.3][]
         }{
-            $regexp[^taint[regex][$token.1^(?P<$token.3>$token.2)]]
+            $regexp[^taint[regex][$token.1]^(?P<$token.3>$token.2)]
+            $matchesOrder.[$token.3][]
 
             ^if($index >= $firstOptional){
-#               Enclose each optional token in a subpattern to make it optional.
-#               "?:" means it is non-capturing, i.e. the portion of the subject string that
-#               matched the optional subpattern is not passed back.
+#               Enclose each optional token in a subpattern to make it optional. :?
                 $regexp[(?:$regexp]
-                $nbTokens[^tokens.count[]]
+                $nbTokens[^tokens._count[]]
                 ^if($nbTokens - 1 == $index){
 #                   Close the optional subpatterns
-                    $regexp[$regexp^self.repeatString[)?;$nbTokens - $firstOptional - (^if($firstOptional == 0){1}{0})]]
+                    $regexp[$regexp^self.repeatString[)?]($nbTokens - $firstOptional - (^if($firstOptional == 0){1}{0}))]
                 }
             }
             $result[$regexp]
@@ -179,5 +185,6 @@ locals
 
 
 @repeatString[str;times][result]
-    ^for[i](0;$times){$result[${result}$str]}
+    $result[]
+    ^for[i](1;$times){$result[${result}$str]}
 ###

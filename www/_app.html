@@ -1,9 +1,9 @@
 $routes[
-    $.package[^Route::create[packages]]
+    $.package[^Route::create[packages/{id}/{some_extra_key};$.some_extra_key[42]]]
 ]
 $matcher[^Matcher::create[$routes]]
 
-^dstop[^matcher.match[packages]]
+^dstop[^matcher.match[packages/10/]]
 
 
 ^switch[$form:fields.request]{

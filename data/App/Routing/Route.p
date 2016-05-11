@@ -39,3 +39,7 @@ locals
 
     $result[$self.compiled]
 ###
+
+@hasDefault[name][result]
+    $result[^self.defaults.contains[$name]]
+###
