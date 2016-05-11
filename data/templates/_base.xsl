@@ -50,7 +50,7 @@
             <a class="uk-navbar-brand uk-hidden-small" href="/">Parsekit</a>
             <ul class="uk-navbar-nav uk-hidden-small">
                 <li>
-                    <a href="/packages">Packages</a>
+                    <a href="/package">My packages</a>
                 </li>
                 <li>
                     <a href="/login">Login</a>

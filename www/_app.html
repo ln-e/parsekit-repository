@@ -1,44 +1,39 @@
 $routes[
-    $.package[^Route::create[packages/{id}/{some_extra_key};$.some_extra_key[42]]]
+    $.package_all[^Route::create[/;
+        $.controller[PackagesController] $.action[all]
+    ]]
+    $.hook[^Route::create[/hook;
+        $.controller[HookController] $.action[chooseByType]
+    ]]
+    $.login[^Route::create[/login;
+        $.controller[UserController] $.action[login]
+    ]]
+    $.logout[^Route::create[/logout;
+        $.controller[UserController] $.action[logout]
+    ]]
+    $.package[^Route::create[/package;
+        $.controller[PackagesController] $.action[list]
+    ]]
+    $.package_add[^Route::create[/package/add;
+        $.controller[PackagesController] $.action[add]
+    ]]
 ]
+
 $matcher[^Matcher::create[$routes]]
 
-^dstop[^matcher.match[packages/10/]]
 
+$variables[^matcher.match[/$form:fields.request]]
 
-^switch[$form:fields.request]{
-    ^case[]{
-    }
-    ^case[test]{
-        $text[1234567890]
-        ^dstop[^text.mid(0;^text.length[]-1)]
-        $pattern[/hello{id}/kitty/{name}]
-        $matches[^pattern.match[{(\w+)}][gi']]
-        ^dstop[$matches]
-    }
-    ^case[hook]{
-        $eventType[$request:headers.[X_GITHUB_EVENT]]
-        $controller[^HookController::create[]]
-        ^controller.chooseActionByType[$eventType]
-    }
-    ^case[login]{
-        $controller[^UserController::create[]]
-        ^controller.loginAction[]
-    }
-    ^case[logout]{
-        $controller[^UserController::create[]]
-        ^controller.logoutAction[]
-    }
-    ^case[package]{
-        $controller[^PackagesController::create[]]
-        ^controller.showAction[]
-    }
-    ^case[package/add]{
-        $controller[^PackagesController::create[]]
-        ^controller.addAction[]
-    }
-    ^case[DEFAULT]{
-        ^throw[RouteNotFoundException;; Route for $form:fields.request not found.]
-    }
+$controller[^reflection:create[$variables.controller;create]]
+$methodInfo[^reflection:method_info[$variables.controller;${variables.action}Action]]
 
+# Prepare arguments string
+$arguments[^hash::create[]]
+^for[i](0;$methodInfo.max_params){
+    $arguments.$i[$variables.[$methodInfo.$i]]
 }
+$argumentsString[^arguments.foreach[key;value]{$value}[^;]]
+
+
+# Executes controller action with right ordered actions
+^process{^^controller.[^${variables.action}Action][$argumentsString]}

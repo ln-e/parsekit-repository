@@ -21,7 +21,8 @@ BaseController
 ###
 
 
-@chooseActionByType[type]
+@chooseByTypeAction[]
+    $type[$request:headers.[X_GITHUB_EVENT]]
     ^switch[$type]{
         ^case[push]{^self.pushAction[]}
         ^case[delete]{^throw[ActionNotImplementedException;;Delete hook action not implemented yet]}

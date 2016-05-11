@@ -38,9 +38,9 @@ BaseController
         $root[^doc.selectSingle[//root]]
 
         ^if(!def $form:fields.code){
-            $transformedDoc[^doc.transform[../data/templates/auth.xsl]]
+            $transformedDoc[^doc.transform[../data/templates/user/login.xsl]]
         }{
-            $data[^githubApi.getToken[$form:fields.code]]
+            $data[^githubApi.getAccessToken[$form:fields.code]]
 
             ^if(def $data.error){
                 $error[^doc.createElement[error]]
