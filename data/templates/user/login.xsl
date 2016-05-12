@@ -31,7 +31,7 @@
                             <buton type="submit" class="uk-button uk-button-large">
                                 Login
                             </buton>
-                            <a href="https://github.com/login/oauth/authorize?scope=user:email,write:repo_hook&amp;client_id=e0a9aa67dbb28d792909" class="uk-button uk-button-large">
+                            <a href="https://github.com/login/oauth/authorize?scope=user:email,write:repo_hook&amp;client_id={github-client-id}" class="uk-button uk-button-large">
                                 <i class="uk-icon-github"/> Github
                             </a>
                         </div>

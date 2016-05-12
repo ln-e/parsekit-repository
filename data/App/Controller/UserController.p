@@ -36,6 +36,9 @@ BaseController
     }{
         $doc[^xdoc::create[root]]
         $root[^doc.selectSingle[//root]]
+        $githubNode[^doc.createElement[github-client-id]]
+        $t[^githubNode.appendChild[^doc.createTextNode[$MAIN:GithubClientId]]]
+        $t[^root.appendChild[$githubNode]]
 
         ^if(!def $form:fields.code){
             $transformedDoc[^doc.transform[../data/templates/user/login.xsl]]
