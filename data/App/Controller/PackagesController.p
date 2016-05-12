@@ -14,11 +14,11 @@ locals
 BaseController
 
 @auto[]
-    $self.security[^Security::create[]]
-    $self.githubApi[^GithubApi::create[]]
 ###
 
 @create[]
+    $self.security[^Security::create[]]
+    $self.githubApi[^GithubApi::create[]]
 ###
 
 @allAction[]

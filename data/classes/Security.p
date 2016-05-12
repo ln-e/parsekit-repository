@@ -11,12 +11,12 @@ Security
 locals
 
 @auto[]
-    $self.session[^Session::create[]]
-    $self.user[]
 ###
 
 
 @create[]
+    $self.session[^Session::create[]]
+    $self.user[]
 ###
 
 
