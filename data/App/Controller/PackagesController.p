@@ -51,35 +51,35 @@ BaseController
 @listAction[]
     ^if(!^self.security.isGranted[]){
         ^self.redirect[/login]
-    }
+    }{
+        $doc[^xdoc::create[root]]
+        $root[^doc.selectSingle[//root]]
+        $packagesNode[^doc.createElement[packages]]
+        $t[^root.appendChild[$packagesNode]]
 
-    $doc[^xdoc::create[root]]
-    $root[^doc.selectSingle[//root]]
-    $packagesNode[^doc.createElement[packages]]
-    $t[^root.appendChild[$packagesNode]]
-
-    $user[^self.security.getUser[]]
-    ^connect[$MAIN:SQL.connect-string]{
-        $packages[^hash::sql{
-            SELECT p.id, p.* FROM package as p
-            LEFT JOIN package_user as pu ON p.id = pu.package_id
-            WHERE pu.user_id = $user.id
-        }]
-    }
-
-
-    ^packages.foreach[key;value]{
-        $packageNode[^doc.createElement[package]]
-        $t[^packagesNode.appendChild[$packageNode]]
-        ^value.foreach[k;v]{
-            $el[^doc.createElement[$k]]
-            $el.nodeValue[$v]
-            $t[^packageNode.appendChild[$el]]
+        $user[^self.security.getUser[]]
+        ^connect[$MAIN:SQL.connect-string]{
+            $packages[^hash::sql{
+                SELECT p.id, p.* FROM package as p
+                LEFT JOIN package_user as pu ON p.id = pu.package_id
+                WHERE pu.user_id = $user.id
+            }]
         }
-    }
 
-    $transformedDoc[^doc.transform[../data/templates/packages/show.xsl]]
-    $result[^if(!def $transformedDoc){}{^transformedDoc.string[$.method[html]]}]
+
+        ^packages.foreach[key;value]{
+            $packageNode[^doc.createElement[package]]
+            $t[^packagesNode.appendChild[$packageNode]]
+            ^value.foreach[k;v]{
+                $el[^doc.createElement[$k]]
+                $el.nodeValue[$v]
+                $t[^packageNode.appendChild[$el]]
+            }
+        }
+
+        $transformedDoc[^doc.transform[../data/templates/packages/show.xsl]]
+        $result[^if(!def $transformedDoc){}{^transformedDoc.string[$.method[html]]}]
+    }
 ###
 
 
