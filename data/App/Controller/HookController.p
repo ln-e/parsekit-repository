@@ -42,7 +42,7 @@ BaseController
     $sha[$data.after]
     $name[^ref.match[(refs\/(?:heads|tags)\/)][gi]{}]
 
-    ^if(-f '/p/${packageName}.json' ){
+    ^if(-f '/p/${packageName}.json'){
         $fileData[^self.parseJson[/p/${packageName}.json](true)]
     }{
         $fileData[
@@ -70,7 +70,24 @@ BaseController
     $data[^json:parse[^taint[as-is][$request:body]]]
     $packageName[$data.repository.full_name]
 
-    ^if(-f '/p/${packageName}.json' ){
+    ^connect[$MAIN:SQL.connect-string]{
+        $package[^hash:sql{
+            SELECT * FROM package WHERE package.name = $packageName
+        };
+            $.limit(1)
+        ]
+
+
+        ^if(!$packageId is hash){
+            ^throw[UnregistredHookException;;Package "$packageName" was not registred in parsekit repostiory.]
+        }
+
+        ^void:sql{
+            DELETE FROM version WHERE version.package_id = $package.id
+        }
+    }
+
+    ^if(-f '/p/${packageName}.json'){
         $oldFileData[^self.parseJson[/p/${packageName}.json](true)]
     }
 
@@ -81,7 +98,6 @@ BaseController
     ]
 
     $refs[^self.parseJson[^self.sanitizeUrl[$data.repository.git_refs_url]]]
-
     ^refs.foreach[k;ref]{
         $name[^ref.ref.match[(refs\/(?:heads|tags)\/)][gi]{}]
         $sha[$ref.object.sha]
@@ -96,8 +112,16 @@ BaseController
         }
     }
 
-    $string[^json:string[$fileData;$.indent(true)]]
+    $values[^fileData.foreach[key;value]{('$package.id', '$value.version', '$packageName', '$value.type', '$value.description', '$value.class_path', '$value.source.url', '$value.source.type', '$value.source.reference', '$value.dist.url', '$value.dist.type', '$value.dist.reference', '^self.githubApi.getParsekitFile[$packageName;$sha]')}[,]]
 
+    ^connect{
+        ^void:sql{
+        INSERT INTO version(package_id, version, name, type, description, class_path, source_url, source_type, source_reference, dist_url, dist_type, dist_reference, parsekit_json)
+        VALUES $values
+        }
+    }
+
+    $string[^json:string[$fileData;$.indent(true)]]
     ^string.save[/p/${packageName}.json]
 
     $result[${packageName}.json saved]

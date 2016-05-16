@@ -20,13 +20,18 @@ locals
 @create[]
     $user[^self.security.getUser[]]
     $self.access_token[$user.github_token]
+    $self.parsekitFileCache[^hash::create[]]
 ###
 
 
 
 @getParsekitFile[repoName;sha][result]
-    $file[^self.getSourceFile[$repoName;$sha;parsekit.json]]
-    $result[^self.decodeFile[$file]]
+    $key[${repoName}$sha]
+    ^if(!^self.parsekitFileCache.contains[$key]){
+        $file[^self.getSourceFile[$repoName;$sha;parsekit.json]]
+        $self.parsekitFileCache.$key[^self.decodeFile[$file]]
+    }
+    $result[$self.parsekitFileCache.$key]
 ###
 
 
