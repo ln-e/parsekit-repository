@@ -83,8 +83,8 @@ locals
         ^if(def $route.methods){
 #           HEAD and GET are equivalent as per RFC
             $method[$request:method]
-            ^if('HEAD' eq $method){
-                $method['GET']
+            ^if(HEAD eq $method){
+                $method[GET]
             }
             ^if(!^requiredMethods.contains[$method]){
                 ^self.allow.add[$requiredMethods]

@@ -4,7 +4,7 @@ Action parsed-html /cgi-bin/parsekit.parser3.cgi
 RewriteEngine on
 RewriteBase /
 
-DirectoryIndex index.html index.htm
+DirectoryIndex _app.html
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule (.*) /_app.html?request=$1 [L,QSA]
