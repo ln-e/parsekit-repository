@@ -71,14 +71,12 @@ BaseController
     $packageName[$data.repository.full_name]
 
     ^connect[$MAIN:SQL.connect-string]{
-        $package[^hash:sql{
-            SELECT * FROM package WHERE package.name = $packageName
-        };
-            $.limit(1)
-        ]
+        $package[^table::sql{
+            SELECT * FROM package WHERE package.name = '$packageName'
+        }[$.limit(1)]]
 
 
-        ^if(!$packageId is hash){
+        ^if(!($package is table && def $package)){
             ^throw[UnregistredHookException;;Package "$packageName" was not registred in parsekit repostiory.]
         }
 
@@ -108,13 +106,15 @@ BaseController
 #           if not changed ref then do not update
             $fileData.packages.[$packageName].$name[$oldFileData.packages.[$packageName].$name]
         }{
-            $fileData.packages.[$packageName].$name[^self.createPackageConfig[$data;$packageName;$sha;$ref;$name]]
+            $fileData.packages.[$packageName].$name[^self.createPackageConfig[$data;$packageName;$sha;$ref.ref;$name]]
         }
     }
 
-    $values[^fileData.foreach[key;value]{('$package.id', '$value.version', '$packageName', '$value.type', '$value.description', '$value.class_path', '$value.source.url', '$value.source.type', '$value.source.reference', '$value.dist.url', '$value.dist.type', '$value.dist.reference', '^self.githubApi.getParsekitFile[$packageName;$sha]')}[,]]
+    $values[^fileData.foreach[key;value]{
+        ('$package.id', '$value.version', '$packageName', '$value.type', '$value.description', '$value.class_path', '$value.source.url', '$value.source.type', '$value.source.reference', '$value.dist.url', '$value.dist.type', '$value.dist.reference', '^json:string[^self.githubApi.getParsekitFile[$packageName;$sha]]]')
+    }[,]]
 
-    ^connect{
+    ^connect[$MAIN:SQL.connect-string]{
         ^void:sql{
         INSERT INTO version(package_id, version, name, type, description, class_path, source_url, source_type, source_reference, dist_url, dist_type, dist_reference, parsekit_json)
         VALUES $values
