@@ -14,8 +14,8 @@ locals
 ###
 
 
-@create[]
-    $self.session[^Session::create[]]
+@create[session]
+    $self.session[$session]
     $self.user[]
 ###
 

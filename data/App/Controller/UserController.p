@@ -18,9 +18,9 @@ BaseController
 
 
 @create[]
-    $self.security[^Security::create[]]
-    $self.session[^Session::create[]]
-    $self.githubApi[^GithubApi::create[]]
+    $self.security[$DI:security]
+    $self.session[$DI:session]
+    $self.githubApi[$DI:githubApi]
 ###
 
 

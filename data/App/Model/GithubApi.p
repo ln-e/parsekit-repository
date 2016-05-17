@@ -13,11 +13,11 @@ locals
 @auto[]
     $self.clientId[$MAIN:GithubClientId]
     $self.secret[$MAIN:GithubSecret]
-    $self.security[^Security::create[]]
 ###
 
 
-@create[]
+@create[security]
+    $self.security[$security]
     $user[^self.security.getUser[]]
     $self.access_token[$user.github_token]
     $self.parsekitFileCache[^hash::create[]]

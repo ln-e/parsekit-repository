@@ -6,9 +6,7 @@
 
 @auto[]
     ^use[Debug.p]
-    ^use[Session.p]
-    ^use[Security.p]
-    ^use[App/Model/GithubApi.p]
+    ^use[App/DI/DI.p]
     ^use[App/Routing/Matcher.p]
     ^use[App/Routing/Route.p]
     ^use[App/Routing/RouteCompiler.p]

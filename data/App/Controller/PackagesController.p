@@ -16,10 +16,12 @@ BaseController
 @auto[]
 ###
 
+
 @create[]
-    $self.security[^Security::create[]]
-    $self.githubApi[^GithubApi::create[]]
+    $self.security[$DI:security]
+    $self.githubApi[$DI:githubApi]
 ###
+
 
 @allAction[]
     $doc[^xdoc::create[root]]

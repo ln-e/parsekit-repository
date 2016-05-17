@@ -17,7 +17,7 @@ BaseController
 ###
 
 @create[]
-    $self.githubApi[^GithubApi::create[]]
+    $self.packageManager[$DI:packageManager]
 ###
 
 
@@ -25,9 +25,9 @@ BaseController
     $type[$request:headers.[X_GITHUB_EVENT]]
     ^switch[$type]{
         ^case[push]{^self.pushAction[]}
-        ^case[delete]{^throw[ActionNotImplementedException;;Delete hook action not implemented yet]}
-        ^case[create]{^throw[ActionNotImplementedException;;Create hook action not implemented yet]}
-        ^case[release]{^throw[ActionNotImplementedException;;Relase hookaction not implemented yet]}
+        ^case[delete]{^self.deleteAction[]}
+        ^case[create]{^self.createAction[]}
+        ^case[release]{^self.releaseAction[]}
         ^case[ping]{^self.checkAllPackageVersionAction[]}
         ^case[DEFAULT]{^throw[ActionNotImplementedException;;Unknown hook type $type]}
     }
@@ -38,31 +38,101 @@ BaseController
     $data[^json:parse[^taint[as-is][$request:body]]]
 
     $packageName[$data.repository.full_name]
-    $ref[$data.ref]
     $sha[$data.after]
-    $name[^ref.match[(refs\/(?:heads|tags)\/)][gi]{}]
+    $version[^ref.match[(refs\/(?:heads|tags)\/)][gi]{}]
 
-    ^if(-f '/p/${packageName}.json'){
-        $fileData[^self.parseJson[/p/${packageName}.json](true)]
+    ^connect[$MAIN:SQL.connect-string]{
+        $package[^table::sql{
+            SELECT * FROM package WHERE package.name = '$packageName'
+        }[$.limit(1)]]
+
+
+        ^if(!($package is table && def $package)){
+            ^throw[UnregistredHookException;;Package '$packageName' was not registred in parsekit repostiory.]
+        }
+    }
+
+    ^self.packageManager.addVersion[$package;$sha;$version]
+    $result[${package.targetDir}.json saved]
+###
+
+
+@createAction[][result]
+    $data[^json:parse[^taint[as-is][$request:body]]]
+
+    $packageName[$data.repository.full_name]
+    $version[$data.ref]
+
+    ^connect[$MAIN:SQL.connect-string]{
+        $package[^table::sql{
+            SELECT * FROM package WHERE package.name = '$packageName'
+        }[$.limit(1)]]
+
+
+        ^if(!($package is table && def $package)){
+            ^throw[UnregistredHookException;;Package '$packageName' was not registred in parsekit repostiory.]
+        }
+    }
+
+    ^if($data.ref_type eq tag){
+        $url[^self.sanitizeUrl[$data.repository.git_tags_url;$.sha[tags/$data.ref]]]
+    }($data.ref_type eq branch){
+        $url[^self.sanitizeUrl[$data.repository.git_refs_url;$.sha[heads/$data.ref]]]
     }{
-        $fileData[
-            $.packages[
-                $.$packageName[^hash::create[]]
-            ]
-        ]
+        ^throw[InvalidRequestException;;Unsupported ref type $data.ref_type]
     }
 
-    ^if(
-        !^fileData.packages.[$packageName].contains[$name] ||
-        $fileData.packages.[$packageName].$name.source.reference ne $sha
-    ){
-        $fileData.packages.[$packageName].$name[^self.createPackageConfig[$data;$packageName;$sha;$ref;$name]]
+    $refs[^self.githubApi.decodeFile[^self.githubApi.makeRequest[$url]]]
+    $sha[$refs.object.sha]
+
+    ^self.packageManager.addVersion[$package;$sha;$version]
+    $result[${package.targetDir}.json saved]
+###
+
+
+@releaseAction[][result]
+    $data[^json:parse[^taint[as-is][$request:body]]]
+
+    $packageName[$data.repository.full_name]
+    $version[$data.release.tag_name]
+
+    ^connect[$MAIN:SQL.connect-string]{
+        $package[^table::sql{
+            SELECT * FROM package WHERE package.name = '$packageName'
+        }[$.limit(1)]]
+
+
+        ^if(!($package is table && def $package)){
+            ^throw[UnregistredHookException;;Package '$packageName' was not registred in parsekit repostiory.]
+        }
     }
 
-    $string[^json:string[$fileData;$.indent(true)]]
-    ^string.save[/p/${packageName}.json]
+    $url[^self.sanitizeUrl[$data.repository.git_tags_url;$.sha[tags/$data.ref]]]
+    $refs[^self.githubApi.decodeFile[^self.githubApi.makeRequest[$url]]]
+    $sha[$refs.object.sha]
 
-    $result[${packageName}.json saved]
+    ^self.packageManager.addVersion[$package;$sha;$version]
+    $result[${package.targetDir}.json saved]
+###
+
+
+@deleteAction[]
+    $data[^json:parse[^taint[as-is][$request:body]]]
+    $packageName[$data.repository.full_name]
+
+    ^connect[$MAIN:SQL.connect-string]{
+        $package[^table::sql{
+            SELECT * FROM package WHERE package.name = '$packageName'
+        }[$.limit(1)]]
+
+
+        ^if(!($package is table && def $package)){
+            ^throw[UnregistredHookException;;Package '$packageName' was not registred in parsekit repostiory.]
+        }
+    }
+
+    ^self.packageManager.removeVersion[$package;$data.ref]
+    $result[${package.targetDir}.json saved]
 ###
 
 
@@ -79,73 +149,11 @@ BaseController
         ^if(!($package is table && def $package)){
             ^throw[UnregistredHookException;;Package "$packageName" was not registred in parsekit repostiory.]
         }
-
-        ^void:sql{
-            DELETE FROM version WHERE version.package_id = $package.id
-        }
     }
-
-    ^if(-f '/p/${packageName}.json'){
-        $oldFileData[^self.parseJson[/p/${packageName}.json](true)]
-    }
-
-    $fileData[
-        $.packages[
-            $.$packageName[^hash::create[]]
-        ]
-    ]
 
     $refs[^self.parseJson[^self.sanitizeUrl[$data.repository.git_refs_url]]]
-    ^refs.foreach[k;ref]{
-        $name[^ref.ref.match[(refs\/(?:heads|tags)\/)][gi]{}]
-        $sha[$ref.object.sha]
-        ^if(
-            ^fileData.packages.[$packageName].contains[$name] &&
-            $fileData.packages.[$packageName].$name.source.reference eq $sha
-        ){
-#           if not changed ref then do not update
-            $fileData.packages.[$packageName].$name[$oldFileData.packages.[$packageName].$name]
-        }{
-            $fileData.packages.[$packageName].$name[^self.createPackageConfig[$data;$packageName;$sha;$ref.ref;$name]]
-        }
-    }
-
-    $values[^fileData.foreach[key;value]{
-        ('$package.id', '$value.version', '$packageName', '$value.type', '$value.description', '$value.class_path', '$value.source.url', '$value.source.type', '$value.source.reference', '$value.dist.url', '$value.dist.type', '$value.dist.reference', '^json:string[^self.githubApi.getParsekitFile[$packageName;$sha]]]')
-    }[,]]
-
-    ^connect[$MAIN:SQL.connect-string]{
-        ^void:sql{
-        INSERT INTO version(package_id, version, name, type, description, class_path, source_url, source_type, source_reference, dist_url, dist_type, dist_reference, parsekit_json)
-        VALUES $values
-        }
-    }
-
-    $string[^json:string[$fileData;$.indent(true)]]
-    ^string.save[/p/${packageName}.json]
-
-    $result[${packageName}.json saved]
-###
-
-
-@createPackageConfig[data;packageName;sha;ref;name][result]
-    $parsekitConfig[^self.githubApi.getParsekitFile[$packageName;$sha]]
-    $parsekitConfig.name[$packageName]
-    $parsekitConfig.targetDir[$packageName]
-    $parsekitConfig.uid(1)
-    $parsekitConfig.version[^if(^ref.pos[refs/heads/master] != -1){dev-master}{$name}]
-    $parsekitConfig.source[
-        $.type[git]
-        $.url[$data.repository.clone_url]
-        $.reference[$sha]
-    ]
-    $parsekitConfig.dist[
-        $.type[zip]
-        $.url[https://api.github.com/repos/$packageName/zipball/$sha]
-        $.reference[$sha]
-    ]
-
-    $result[$parsekitConfig]
+    ^self.packageManager.addVersions[$package;$refs]
+    $result[${package.targetDir}.json saved]
 ###
 
 
