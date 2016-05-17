@@ -20,9 +20,10 @@ locals
 ###
 
 
-@addVersion[package;sha;version][result]
-    ^if(-f '/p/${package.targetDir}.json'){
-        $fileData[^self.parseJson[/p/${package.targetDir}.json](true)]
+@addVersion[hookData;package;sha;version]
+    $result[]
+    ^if(-f '/p/${package.target_dir}.json'){
+        $fileData[^self.parseJson[/p/${package.target_dir}.json](true)]
     }{
         $fileData[
             $.packages[
@@ -39,7 +40,7 @@ locals
             ^void:sql{
                 DELETE FROM version WHERE version.version = $version
             }
-            $fileData.packages.[$package.name].$version[^self.createPackageConfig[$data;$package.name;$sha;$version]]
+            $fileData.packages.[$package.name].$version[^self.createPackageConfig[$hookData;$package.name;$sha;$version]]
             $value[$fileData.packages.[$package.name].$version]
 
             ^void:sql{
@@ -50,19 +51,20 @@ locals
     }
 
     $string[^json:string[$fileData;$.indent(true)]]
-    ^string.save[/p/${package.targetDir}.json]
+    ^string.save[/p/${package.target_dir}.json]
 ###
 
 
-@addVersions[package;refs][result]
+@addVersions[hookData;package;refs]
+    $result[]
     ^connect[$MAIN:SQL.connect-string]{
         ^void:sql{
             DELETE FROM version WHERE version.package_id = $package.id
         }
     }
 
-    ^if(-f '/p/${package.targetDir}.json'){
-        $oldFileData[^self.parseJson[/p/${package.targetDir}.json](true)]
+    ^if(-f '/p/${package.target_dir}.json'){
+        $oldFileData[^self.parseJson[/p/${package.target_dir}.json](true)]
     }
 
     $fileData[
@@ -81,7 +83,7 @@ locals
 #           if not changed ref then do not update
             $fileData.packages.[$package.name].$version[$oldFileData.packages.[$package.name].$version]
         }{
-            $fileData.packages.[$package.name].$version[^self.createPackageConfig[$data;$package.name;$sha;$version]]
+            $fileData.packages.[$package.name].$version[^self.createPackageConfig[$hookData;$package.name;$sha;$version]]
         }
     }
 
@@ -95,37 +97,38 @@ locals
     }
 
     $string[^json:string[$fileData;$.indent(true)]]
-    ^string.save[/p/${package.targetDir}.json]
+    ^string.save[/p/${package.target_dir}.json]
 ###
 
 
-@removeVersion[package;version][result]
+@removeVersion[package;version]
+    $result[]
     ^connect[$MAIN:SQL.connect-string]{
         ^void:sql{
             DELETE FROM version WHERE version.package_id = $package.id AND version.version = '$version'
         }
     }
 
-    ^if(-f '/p/${package.targetDir}.json'){
-        $fileData[^self.parseJson[/p/${package.targetDir}.json](true)]
+    ^if(-f '/p/${package.target_dir}.json'){
+        $fileData[^self.parseJson[/p/${package.target_dir}.json](true)]
 
         ^fileData.packages.[$package.name].delete[$version]
 
         $string[^json:string[$fileData;$.indent(true)]]
-        ^string.save[/p/${package.targetDir}.json]
+        ^string.save[/p/${package.target_dir}.json]
     }
 ###
 
 
-@createPackageConfig[data;packageName;sha;version][result]
+@createPackageConfig[hookData;packageName;sha;version][result]
     $parsekitConfig[^self.githubApi.getParsekitFile[$packageName;$sha]]
     $parsekitConfig.name[$packageName]
-    $parsekitConfig.targetDir[$packageName]
+    $parsekitConfig.target_dir[$packageName]
     $parsekitConfig.uid(1)
     $parsekitConfig.version[^if($version eq master]){dev-master}{$version}]
     $parsekitConfig.source[
         $.type[git]
-        $.url[$data.repository.clone_url]
+        $.url[$hookData.repository.clone_url]
         $.reference[$sha]
     ]
     $parsekitConfig.dist[
@@ -160,8 +163,8 @@ locals
 
 @generateInsertValues[package;packages;version][result]
     $result[^packages.foreach[packageVersion;value]{
-        ^if(def $version && $packageVesion eq $version){
-            ('$package.id', '$value.version', '$package.name', '$value.type', '$value.description', '$value.class_path', '$value.source.url', '$value.source.type', '$value.source.reference', '$value.dist.url', '$value.dist.type', '$value.dist.reference', '^json:string[^self.githubApi.getParsekitFile[$package.name;$sha]]]')
+        ^if(!def $version || $packageVesion eq $version){
+            ('$package.id', '$value.version', '$package.name', '$value.type', '$value.description', '$value.class_path', '$value.source.url', '$value.source.type', '$value.source.reference', '$value.dist.url', '$value.dist.type', '$value.dist.reference', '^json:string[^self.githubApi.getParsekitFile[$package.name;$value.source.reference]]]')
         }
     }[,]]
 ###

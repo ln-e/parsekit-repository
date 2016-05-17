@@ -53,7 +53,7 @@ BaseController
     }
 
     ^self.packageManager.addVersion[$package;$sha;$version]
-    $result[${package.targetDir}.json saved]
+    $result[${package.target_dir}.json saved]
 ###
 
 
@@ -86,7 +86,7 @@ BaseController
     $sha[$refs.object.sha]
 
     ^self.packageManager.addVersion[$package;$sha;$version]
-    $result[${package.targetDir}.json saved]
+    $result[${package.target_dir}.json saved]
 ###
 
 
@@ -112,7 +112,7 @@ BaseController
     $sha[$refs.object.sha]
 
     ^self.packageManager.addVersion[$package;$sha;$version]
-    $result[${package.targetDir}.json saved]
+    $result[${package.target_dir}.json saved]
 ###
 
 
@@ -132,7 +132,7 @@ BaseController
     }
 
     ^self.packageManager.removeVersion[$package;$data.ref]
-    $result[${package.targetDir}.json saved]
+    $result[${package.target_dir}.json saved]
 ###
 
 
@@ -152,8 +152,8 @@ BaseController
     }
 
     $refs[^self.parseJson[^self.sanitizeUrl[$data.repository.git_refs_url]]]
-    ^self.packageManager.addVersions[$package;$refs]
-    $result[${package.targetDir}.json saved]
+    ^self.packageManager.addVersions[$data;$package;$refs]
+    $result[${package.target_dir}.json saved]
 ###
 
 

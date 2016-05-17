@@ -69,7 +69,6 @@ App/Model/PackageManager.p
     ^if(!^self.instances.contains[$key]){
         $servise[$self.registry.$key]
         $params[^servise.services.foreach[i;name]{^^DI:getService[$name]}[^;]]
-        ^if(^Application:hasOption[debug]){$console:line[Instantiated service '$key']}
 #       because reflection class cannot acept hash of params
 #       ^reflection:create[$servise.class;create;-hash-here-]
         ^process{^$object[^^$servise.class^::create[$params]]}
