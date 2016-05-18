@@ -15,5 +15,6 @@
     ^use[App/Controller/MigrationController.p]
     ^use[App/Controller/HookController.p]
     ^use[App/Controller/UserController.p]
+    ^use[App/Controller/StatController.p]
     ^use[App/Controller/PackagesController.p]
 ###

@@ -2,59 +2,58 @@
 
     <xsl:import href="../_base.xsl" />
 
+    <xsl:template name="page_title">
+        <h1>
+          <xsl:value-of select="package/name"/></h1>
+    </xsl:template>
+
     <xsl:template name="body_inner">
         <div class="uk-grid" data-uk-grid-margin="">
             <div class="uk-width-medium-1-1 uk-row-first">
                 <table class="uk-table">
-                    <thead>
+                    <body>
                         <tr>
-                            <th>#</th>
                             <th>Name</th>
-                            <th>Type</th>
-                            <th>Description</th>
-                            <th>Keywords</th>
-                            <th>Actions</th>
+                            <td><xsl:value-of select="package/name" /></td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <xsl:apply-templates select="packages/package" mode="packages_list" />
-                    </tbody>
+                        <tr>
+                            <th>Type</th>
+                            <td><xsl:value-of select="package/type" /></td>
+                        </tr>
+                        <tr>
+                            <th>Description</th>
+                            <td><xsl:value-of select="package/descirption" /></td>
+                        </tr>
+                        <tr>
+                            <th>Keywords</th>
+                            <td><xsl:value-of select="package/keywords" /></td>
+                        </tr>
+                        <tr>
+                            <th>Created at</th>
+                            <td><xsl:value-of select="package/created_at" /></td>
+                        </tr>
+                        <tr>
+                            <th>Versions</th>
+                            <td>
+                                <ul>
+                                    <xsl:apply-templates select="package/versions/version" mode="versions" />
+                                </ul>
+                            </td>
+                        </tr>
+                    </body>
                 </table>
 
-                <form action="/package/add" class="uk-form">
-                    <fieldset data-uk-margin="">
-                        <input type="text" name="package" placeholder="vendor/name" />
-                        <button type="submit" class="uk-button uk-button-primary">Add package</button>
-                    </fieldset>
-                </form>
-
-
+                <a href="/">Back to main page</a>
             </div>
         </div>
     </xsl:template>
 
 
-    <xsl:template match="package" mode="packages_list">
-        <tr>
-            <td>
-                <xsl:value-of select="position()"/>
-            </td>
-            <td>
-                <xsl:value-of select="name"/>
-            </td>
-            <td>
-                <xsl:value-of select="type"/>
-            </td>
-            <td>
-                <xsl:value-of select="description"/>
-            </td>
-            <td>
-                <xsl:value-of select="keywords"/>
-            </td>
-            <td>
-                <div class="uk-badge">not available</div>
-            </td>
-        </tr>
+    <xsl:template match="version" mode="versions">
+        <li>
+            <xsl:value-of select="."/>
+        </li>
     </xsl:template>
+
 
 </xsl:stylesheet>

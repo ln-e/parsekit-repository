@@ -8,6 +8,9 @@ $routes[
     $.hook[^Route::create[/hook;
         $.controller[HookController] $.action[chooseByType]
     ]]
+    $.downloads[^Route::create[/downloads/{packageName};
+        $.controller[StatController] $.action[downloads]
+    ]]
     $.login[^Route::create[/login;
         $.controller[UserController] $.action[login]
     ]]
@@ -16,6 +19,10 @@ $routes[
     ]]
     $.package[^Route::create[/package;
         $.controller[PackagesController] $.action[list]
+    ]]
+    $.package_show[^Route::create[/package/{id};
+        $.controller[PackagesController] $.action[show];
+        $.id[\d+]
     ]]
     $.package_add[^Route::create[/package/add;
         $.controller[PackagesController] $.action[add]

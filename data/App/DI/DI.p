@@ -16,6 +16,7 @@ App/Model/Session.p
 App/Model/Security.p
 App/Model/GithubApi.p
 App/Model/PackageManager.p
+App/Model/ProviderManager.p
 
 
 
@@ -36,7 +37,9 @@ App/Model/PackageManager.p
         ]]
         $.packageManager[^Service::create[PackageManager;
             $.0[githubApi]
+            $.1[providerManager]
         ]]
+        $.providerManager[^Service::create[ProviderManager]]
     ]
     $self.instances[^hash::create[]]
 ###

@@ -20,6 +20,7 @@ BaseController
 @create[]
     $self.security[$DI:security]
     $self.githubApi[$DI:githubApi]
+    $self.providerManager[$DI:providerManager]
 ###
 
 
@@ -31,7 +32,7 @@ BaseController
 
     ^connect[$MAIN:SQL.connect-string]{
         $packages[^hash::sql{
-            SELECT p.* FROM package as p
+            SELECT p.id, p.* FROM package as p
         }[$.limit(10)]]
     }
 
@@ -79,9 +80,55 @@ BaseController
             }
         }
 
-        $transformedDoc[^doc.transform[../data/templates/packages/show.xsl]]
+        $transformedDoc[^doc.transform[../data/templates/packages/list.xsl]]
         $result[^if(!def $transformedDoc){}{^transformedDoc.string[$.method[html]]}]
     }
+###
+
+
+@showAction[id]
+    $doc[^xdoc::create[root]]
+    $root[^doc.selectSingle[//root]]
+
+    $user[^self.security.getUser[]]
+    ^connect[$MAIN:SQL.connect-string]{
+        $packages[^hash::sql{
+            SELECT p.* FROM package as p
+            WHERE p.id = $id
+        }]
+
+        $package[^packages._at(0)]
+
+        ^if(!def $package){
+            ^throw[NotFoundException;;Package with id "$id" not found]
+        }
+    }
+
+    $packageNode[^doc.createElement[package]]
+    $t[^root.appendChild[$packageNode]]
+    ^package.foreach[k;v]{
+        $el[^doc.createElement[$k]]
+        $el.nodeValue[$v]
+        $t[^packageNode.appendChild[$el]]
+    }
+    $versionsNode[^doc.createElement[versions]]
+    $t[^packageNode.appendChild[$versionsNode]]
+
+    ^connect[$MAIN:SQL.connect-string]{
+        $versions[^hash::sql{
+            SELECT v.* FROM version as v
+            WHERE v.package_id = $id
+        }]
+    }
+
+    ^versions.foreach[versionId;version]{
+        $el[^doc.createElement[version]]
+        $el.nodeValue[$version.version]
+        $t[^versionsNode.appendChild[$el]]
+    }
+
+    $transformedDoc[^doc.transform[../data/templates/packages/show.xsl]]
+    $result[^if(!def $transformedDoc){}{^transformedDoc.string[$.method[html]]}]
 ###
 
 
@@ -123,8 +170,8 @@ BaseController
             }]
         }
 
+        $r[^self.providerManager.dumpProvider[^self.providerManager.providerKeyByPackage[$packageId]]]
         ^self.githubApi.ping[$packageName;$hookData.id]
-
-        ^self.redirect[/package]
+        ^self.redirect[/package/$packageId]
     }
 ###

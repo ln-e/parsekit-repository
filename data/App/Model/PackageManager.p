@@ -15,8 +15,9 @@ locals
 ###
 
 
-@create[githubApi]
+@create[githubApi;providerManager]
     $self.githubApi[$githubApi]
+    $self.providerManager[$providerManager]
 ###
 
 
@@ -52,6 +53,8 @@ locals
 
     $string[^json:string[$fileData;$.indent(true)]]
     ^string.save[/p/${package.target_dir}.json]
+
+    ^self.providerManager.dumpProvider[^self.providerManager.providerKeyByPackage[$package]]
 ###
 
 
@@ -98,6 +101,8 @@ locals
 
     $string[^json:string[$fileData;$.indent(true)]]
     ^string.save[/p/${package.target_dir}.json]
+
+    ^self.providerManager.dumpProvider[^self.providerManager.providerKeyByPackage[$package]]
 ###
 
 
@@ -117,6 +122,8 @@ locals
         $string[^json:string[$fileData;$.indent(true)]]
         ^string.save[/p/${package.target_dir}.json]
     }
+
+    ^self.providerManager.dumpProvider[^self.providerManager.providerKeyByPackage[$package]]
 ###
 
 
