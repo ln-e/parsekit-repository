@@ -17,6 +17,7 @@ BaseController
 ###
 
 @create[]
+    $self.githubApi[$DI:githubApi]
     $self.packageManager[$DI:packageManager]
 ###
 
@@ -39,7 +40,7 @@ BaseController
 
     $packageName[$data.repository.full_name]
     $sha[$data.after]
-    $version[^ref.match[(refs\/(?:heads|tags)\/)][gi]{}]
+    $version[^data.ref.match[(refs\/(?:heads|tags)\/)][gi]{}]
 
     ^connect[$MAIN:SQL.connect-string]{
         $package[^table::sql{
@@ -52,7 +53,7 @@ BaseController
         }
     }
 
-    ^self.packageManager.addVersion[$package;$sha;$version]
+    ^self.packageManager.addVersion[$data;$package.fields;$sha;$version]
     $result[${package.target_dir}.json saved]
 ###
 
@@ -75,9 +76,9 @@ BaseController
     }
 
     ^if($data.ref_type eq tag){
-        $url[^self.sanitizeUrl[$data.repository.git_tags_url;$.sha[tags/$data.ref]]]
+        $url[^self.sanitizeUrl[$data.repository.git_refs_url;$.sha[/tags/$data.ref]]]
     }($data.ref_type eq branch){
-        $url[^self.sanitizeUrl[$data.repository.git_refs_url;$.sha[heads/$data.ref]]]
+        $url[^self.sanitizeUrl[$data.repository.git_refs_url;$.sha[/heads/$data.ref]]]
     }{
         ^throw[InvalidRequestException;;Unsupported ref type $data.ref_type]
     }
@@ -85,7 +86,7 @@ BaseController
     $refs[^self.githubApi.decodeFile[^self.githubApi.makeRequest[$url]]]
     $sha[$refs.object.sha]
 
-    ^self.packageManager.addVersion[$package;$sha;$version]
+    ^self.packageManager.addVersion[$data;$package;$sha;$version]
     $result[${package.target_dir}.json saved]
 ###
 
@@ -101,17 +102,18 @@ BaseController
             SELECT * FROM package WHERE package.name = '$packageName'
         }[$.limit(1)]]
 
+        $package[$package.fields]
 
-        ^if(!($package is table && def $package)){
+        ^if(!($package is hash && def $package)){
             ^throw[UnregistredHookException;;Package '$packageName' was not registred in parsekit repostiory.]
         }
     }
 
-    $url[^self.sanitizeUrl[$data.repository.git_tags_url;$.sha[tags/$data.ref]]]
+    $url[^self.sanitizeUrl[$data.repository.git_refs_url;$.sha[/tags/$data.release.tag_name]]]
     $refs[^self.githubApi.decodeFile[^self.githubApi.makeRequest[$url]]]
     $sha[$refs.object.sha]
 
-    ^self.packageManager.addVersion[$package;$sha;$version]
+    ^self.packageManager.addVersion[$data;$package;$sha;$version]
     $result[${package.target_dir}.json saved]
 ###
 
@@ -160,7 +162,7 @@ BaseController
 @sanitizeUrl[url;params][result]
     ^if($params is hash){
         ^params.foreach[key;value]{
-            $url[^url.replace[{$key};$value]]
+            $url[^url.replace[{/$key};$value]]
         }
     }
     $result[^url.match[({\D+})][gi]{}]

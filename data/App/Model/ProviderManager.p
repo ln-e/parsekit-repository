@@ -101,7 +101,7 @@ locals
 
 
 @providerKeyByPackage[package][result]
-    ^if(!($package is hash) && !($package is table)){
+    ^if(($package is hash) || ($package is table)){
         $packageId[$package.id]
     }{
         $packageId[$package]

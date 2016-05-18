@@ -23,8 +23,8 @@ locals
 
 @addVersion[hookData;package;sha;version]
     $result[]
-    ^if(-f '/p/${package.target_dir}.json'){
-        $fileData[^self.parseJson[/p/${package.target_dir}.json](true)]
+    ^if(-f '/p/${package.name}.json'){
+        $fileData[^self.parseJson[/p/${package.name}.json](true)]
     }{
         $fileData[
             $.packages[
@@ -39,7 +39,7 @@ locals
     ){
         ^connect[$MAIN:SQL.connect-string]{
             ^void:sql{
-                DELETE FROM version WHERE version.version = $version
+                DELETE FROM version WHERE version.version = '$version'
             }
             $fileData.packages.[$package.name].$version[^self.createPackageConfig[$hookData;$package.name;$sha;$version]]
             $value[$fileData.packages.[$package.name].$version]
@@ -52,7 +52,7 @@ locals
     }
 
     $string[^json:string[$fileData;$.indent(true)]]
-    ^string.save[/p/${package.target_dir}.json]
+    ^string.save[/p/${package.name}.json]
 
     ^self.providerManager.dumpProvider[^self.providerManager.providerKeyByPackage[$package]]
 ###
@@ -66,8 +66,8 @@ locals
         }
     }
 
-    ^if(-f '/p/${package.target_dir}.json'){
-        $oldFileData[^self.parseJson[/p/${package.target_dir}.json](true)]
+    ^if(-f '/p/${package.name}.json'){
+        $oldFileData[^self.parseJson[/p/${package.name}.json](true)]
     }
 
     $fileData[
@@ -100,7 +100,7 @@ locals
     }
 
     $string[^json:string[$fileData;$.indent(true)]]
-    ^string.save[/p/${package.target_dir}.json]
+    ^string.save[/p/${package.name}.json]
 
     ^self.providerManager.dumpProvider[^self.providerManager.providerKeyByPackage[$package]]
 ###
@@ -114,13 +114,13 @@ locals
         }
     }
 
-    ^if(-f '/p/${package.target_dir}.json'){
-        $fileData[^self.parseJson[/p/${package.target_dir}.json](true)]
+    ^if(-f '/p/${package.name}.json'){
+        $fileData[^self.parseJson[/p/${package.name}.json](true)]
 
         ^fileData.packages.[$package.name].delete[$version]
 
         $string[^json:string[$fileData;$.indent(true)]]
-        ^string.save[/p/${package.target_dir}.json]
+        ^string.save[/p/${package.name}.json]
     }
 
     ^self.providerManager.dumpProvider[^self.providerManager.providerKeyByPackage[$package]]
@@ -169,9 +169,7 @@ locals
 
 
 @generateInsertValues[package;packages;version][result]
-    $result[^packages.foreach[packageVersion;value]{
-        ^if(!def $version || $packageVesion eq $version){
-            ('$package.id', '$value.version', '$package.name', '$value.type', '$value.description', '$value.class_path', '$value.source.url', '$value.source.type', '$value.source.reference', '$value.dist.url', '$value.dist.type', '$value.dist.reference', '^json:string[^self.githubApi.getParsekitFile[$package.name;$value.source.reference]]]')
-        }
-    }[,]]
+    $result[^packages.foreach[packageVersion;value]{^if(!def $version || $packageVersion eq $version){
+        ('$package.id', '$value.version', '$package.name', '$value.type', '$value.description', '$value.class_path', '$value.source.url', '$value.source.type', '$value.source.reference', '$value.dist.url', '$value.dist.type', '$value.dist.reference', '^json:string[^self.githubApi.getParsekitFile[$package.name;$value.source.reference]]]')
+    }}[,]]
 ###
