@@ -22,5 +22,15 @@ BaseController
 
 
 @downloadsAction[packageName][result]
-    ^throw[NotImplementedExpection;;Downloads statistic collection is not impelmented]
+    ^connect[$MAIN:SQL.connect-string]{
+        $r[^void:sql{
+            UPDATE
+              package
+            SET
+              package.installs = package.installs + 1
+            WHERE
+              package.name = '$packageName'
+        }]
+    }
+    $result[{"result": "ok"}]
 ###

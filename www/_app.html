@@ -9,7 +9,8 @@ $routes[
         $.controller[HookController] $.action[chooseByType]
     ]]
     $.downloads[^Route::create[/downloads/{packageName};
-        $.controller[StatController] $.action[downloads]
+        $.controller[StatController] $.action[downloads];
+        $.packageName[.+]
     ]]
     $.login[^Route::create[/login;
         $.controller[UserController] $.action[login]

@@ -29,6 +29,10 @@
                             <td><xsl:value-of select="package/keywords" /></td>
                         </tr>
                         <tr>
+                            <th>Installs</th>
+                            <td><xsl:value-of select="package/installs" /></td>
+                        </tr>
+                        <tr>
                             <th>Created at</th>
                             <td><xsl:value-of select="package/created_at" /></td>
                         </tr>

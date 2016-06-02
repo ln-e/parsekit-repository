@@ -48,7 +48,10 @@ BaseController
             $file[^file::load[text;/../data/sql/${missingVersions.version}.sql]]
             $queries[^file.text.split[^;]]
             ^queries.menu{
-                ^void:sql{^taint[as-is][$queries.piece]}
+                $sql[^queries.piece.trim[both]]
+                ^if(def $sql && $sql ne ''){
+                    ^void:sql{^taint[as-is][$sql]}
+                }
             }
             ^void:sql{INSERT INTO migrations values($missingVersions.version)}
             $result[$result ${missingVersions.version}.sql,]
