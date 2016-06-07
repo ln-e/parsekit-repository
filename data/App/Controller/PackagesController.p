@@ -132,6 +132,35 @@ BaseController
 ###
 
 
+@searchAction[]
+    $query[$form:fields.q]
+
+    ^if(!def $query){
+        ^throw[BadRequestException;;query is not specified]
+    }
+
+    ^connect[$MAIN:SQL.connect-string]{
+        $packages[^table::sql{
+            SELECT
+              p.name
+            FROM
+              package as p
+            WHERE
+              p.name like '%${query}%'
+              OR p.keywords like '%$query%'
+        }]
+
+        $r[^hash::create[]]
+        $r.protocol[$MAIN:protocol]
+        $r.query[$query]
+        $r.packages[$packages]
+
+        $response:content-type[Application/json]
+        $result[^json:string[$r;$.indent(true)]]
+    }
+###
+
+
 @addAction[]
     ^if(!^self.security.isGranted[]){
         ^self.redirect[/login]

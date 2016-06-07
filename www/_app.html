@@ -1,3 +1,6 @@
+
+$MAIN:protocol(1)
+
 $routes[
     $.package_all[^Route::create[/;
         $.controller[PackagesController] $.action[all]
@@ -11,6 +14,9 @@ $routes[
     $.downloads[^Route::create[/downloads/{packageName};
         $.controller[StatController] $.action[downloads];
         $.packageName[.+]
+    ]]
+    $.search[^Route::create[/search.json;
+        $.controller[PackagesController] $.action[search]
     ]]
     $.login[^Route::create[/login;
         $.controller[UserController] $.action[login]

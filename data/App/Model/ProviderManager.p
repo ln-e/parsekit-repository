@@ -22,10 +22,10 @@ locals
 @dumpMainConfig[][result]
     $result[]
     $packages[
-        $.protocol(1)
+        $.protocol[$MAIN:protocol]
         $.packages[^hash::create[]]
         $.notify[/downloads/%packages%]
-        $.search[/search.json?q=%query%]
+        $.search[/search?q=%query%]
         $.packageUrl[/p/%package%.json]
         $.providers[^hash::create[]]
     ]
