@@ -35,7 +35,7 @@ locals
 
     ^if(
         !^fileData.packages.[$package.name].contains[$name] ||
-        $fileData.packages.[$package.name].$version.source.reference ne $sha
+        $fileData.packages.[$package.name].$version.sourceReference ne $sha
     ){
         ^connect[$MAIN:SQL.connect-string]{
             ^void:sql{
@@ -81,7 +81,7 @@ locals
         $sha[$ref.object.sha]
         ^if(
             ^fileData.packages.[$package.name].contains[$version] &&
-            $fileData.packages.[$package.name].$version.source.reference eq $sha
+            $fileData.packages.[$package.name].$version.sourceReference eq $sha
         ){
 #           if not changed ref then do not update
             $fileData.packages.[$package.name].$version[$oldFileData.packages.[$package.name].$version]
@@ -133,16 +133,12 @@ locals
     $parsekitConfig.target_dir[$packageName]
     $parsekitConfig.uid(1)
     $parsekitConfig.version[^if($version eq master]){dev-master}{$version}]
-    $parsekitConfig.source[
-        $.type[git]
-        $.url[$hookData.repository.clone_url]
-        $.reference[$sha]
-    ]
-    $parsekitConfig.dist[
-        $.type[zip]
-        $.url[https://api.github.com/repos/$packageName/zipball/$sha]
-        $.reference[$sha]
-    ]
+    $parsekitConfig.sourceType[git]
+    $parsekitConfig.sourceUrl[$hookData.repository.clone_url]
+    $parsekitConfig.sourceReference[$sha]
+    $parsekitConfig.distType[zip]
+    $parsekitConfig.distUrl[https://api.github.com/repos/$packageName/zipball/$sha]
+    $parsekitConfig.distReference[$sha]
 
     $result[$parsekitConfig]
 ###
@@ -170,6 +166,6 @@ locals
 
 @generateInsertValues[package;packages;version][result]
     $result[^packages.foreach[packageVersion;value]{^if(!def $version || $packageVersion eq $version){
-        ('$package.id', '$value.version', '$package.name', '$value.type', '$value.description', '$value.class_path', '$value.source.url', '$value.source.type', '$value.source.reference', '$value.dist.url', '$value.dist.type', '$value.dist.reference', '^json:string[^self.githubApi.getParsekitFile[$package.name;$value.source.reference]]]')
+        ('$package.id', '$value.version', '$package.name', '$value.type', '$value.description', '$value.class_path', '$value.sourceUrl', '$value.sourceType', '$value.sourceReference', '$value.distUrl', '$value.distType', '$value.distReference', '^json:string[^self.githubApi.getParsekitFile[$package.name;$value.sourceReference]]]')
     }}[,]]
 ###
