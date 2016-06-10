@@ -135,29 +135,32 @@ BaseController
 @searchAction[]
     $query[$form:fields.q]
 
+    $r[^hash::create[]]
+    $r.protocol[$MAIN:protocol]
+    $r.query[$query]
+
+
     ^if(!def $query){
-        ^throw[BadRequestException;;query is not specified]
-    }
+        $r.packages[^hash::create[]]
+        $r.error[Query is not specified]
+    }{
+        ^connect[$MAIN:SQL.connect-string]{
+            $packages[^table::sql{
+                SELECT
+                  p.name
+                FROM
+                  package as p
+                WHERE
+                  p.name like '%${query}%'
+                  OR p.keywords like '%$query%'
+            }]
+        }
 
-    ^connect[$MAIN:SQL.connect-string]{
-        $packages[^table::sql{
-            SELECT
-              p.name
-            FROM
-              package as p
-            WHERE
-              p.name like '%${query}%'
-              OR p.keywords like '%$query%'
-        }]
-
-        $r[^hash::create[]]
-        $r.protocol[$MAIN:protocol]
-        $r.query[$query]
         $r.packages[$packages]
-
-        $response:content-type[Application/json]
-        $result[^json:string[$r;$.indent(true)]]
     }
+
+    $response:content-type[Application/json]
+    $result[^json:string[$r;$.indent(true)]]
 ###
 
 
