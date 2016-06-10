@@ -34,6 +34,11 @@ $routes[
     $.package_add[^Route::create[/package/add;
         $.controller[PackagesController] $.action[add]
     ]]
+
+
+    $.users_add[^Route::create[/backend/user;
+        $.controller[BackendController] $.action[userIndex]
+    ]]
 ]
 
 $matcher[^Matcher::create[$routes]]

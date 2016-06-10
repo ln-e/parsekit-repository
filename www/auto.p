@@ -12,6 +12,7 @@
     ^use[App/Routing/RouteCompiler.p]
     ^use[App/Routing/CompiledRoute.p]
     ^use[App/Controller/BaseController.p]
+    ^use[App/Controller/BackendController.p]
     ^use[App/Controller/MigrationController.p]
     ^use[App/Controller/HookController.p]
     ^use[App/Controller/UserController.p]

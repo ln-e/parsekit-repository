@@ -39,7 +39,12 @@ locals
 ###
 
 
-@isGranted[][result]
+@isGranted[role][result]
     $user[^self.getUser[]]
-    $result(def $user)
+    ^if(!def $role){
+        $result(def $user)
+    }{
+#       dirty hack
+        $result($user.email eq bodnar_i@mail.ru)
+    }
 ###
