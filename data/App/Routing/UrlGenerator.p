@@ -24,7 +24,7 @@ locals
     ^if(!def $referenceType){
         $referenceType[$self.ABSOLUTE_PATH]
     }
-    $route[$this.routes.$name]
+    $route[$self.routes.$name]
     ^if(!def $route){
         ^throw[RouteNotFoundException;;Unable to generate a URL for the named route "$name" as such route does not exist.]
     }
@@ -61,7 +61,7 @@ locals
                     }
                     ^continue[]
                 }
-                $url[${token.1}${mergedParams[$token.3]}$url]
+                $url[${token.1}${mergedParams.[$token.3]}$url]
                 $optional(false)
             }
             ^throw[NotImplementedYet]
@@ -103,10 +103,10 @@ locals
                     $routeHost[${token.1}$routeHost]
                 }
             }
-            ^if($routeHost !== $host){
+            ^if($routeHost ne $host){
                 $host[$routeHost]
                 ^if($self.ABSOLUTE_URL ne $referenceType){
-                    $referenceType[^self.NETWORK_PATH]
+                    $referenceType[$self.NETWORK_PATH]
                 }
             }
         }
@@ -129,7 +129,7 @@ locals
     ^extra.sub[$defaults]
 
     ^if($extra){
-        $query[$extra.foreach[ekey;evalue]{$ekey=^taint[uri][$evalue]}[&]]
+        $query[^extra.foreach[ekey;evalue]{$ekey=^taint[uri][$evalue]}[&]]
         $url[${url}?$query]
     }
 
