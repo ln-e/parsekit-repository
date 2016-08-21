@@ -25,29 +25,17 @@ BaseController
 
 
 @allAction[]
-    $doc[^xdoc::create[root]]
-    $root[^doc.selectSingle[//root]]
-    $packagesNode[^doc.createElement[packages]]
-    $t[^root.appendChild[$packagesNode]]
-
     ^connect[$MAIN:SQL.connect-string]{
         $packages[^hash::sql{
             SELECT p.id, p.* FROM package as p
         }[$.limit(10)]]
     }
 
-    ^packages.foreach[key;value]{
-        $packageNode[^doc.createElement[package]]
-        $t[^packagesNode.appendChild[$packageNode]]
-        ^value.foreach[k;v]{
-            $el[^doc.createElement[$k]]
-            $el.nodeValue[$v]
-            $t[^packageNode.appendChild[$el]]
-        }
-    }
+    $data[
+        $.packages[$packages]
+    ]
 
-    $transformedDoc[^doc.transform[../data/templates/packages/all.xsl]]
-    $result[^if(!def $transformedDoc){}{^transformedDoc.string[$.method[html]]}]
+    $result[^self.render[$data;../data/templates/packages/all.xsl]]
 ###
 
 
@@ -55,11 +43,6 @@ BaseController
     ^if(!^self.security.isGranted[]){
         ^self.redirect[/login]
     }{
-        $doc[^xdoc::create[root]]
-        $root[^doc.selectSingle[//root]]
-        $packagesNode[^doc.createElement[packages]]
-        $t[^root.appendChild[$packagesNode]]
-
         $user[^self.security.getUser[]]
         ^connect[$MAIN:SQL.connect-string]{
             $packages[^hash::sql{
@@ -69,27 +52,16 @@ BaseController
             }]
         }
 
+        $data[
+            $.packages[$packages]
+        ]
 
-        ^packages.foreach[key;value]{
-            $packageNode[^doc.createElement[package]]
-            $t[^packagesNode.appendChild[$packageNode]]
-            ^value.foreach[k;v]{
-                $el[^doc.createElement[$k]]
-                $el.nodeValue[$v]
-                $t[^packageNode.appendChild[$el]]
-            }
-        }
-
-        $transformedDoc[^doc.transform[../data/templates/packages/list.xsl]]
-        $result[^if(!def $transformedDoc){}{^transformedDoc.string[$.method[html]]}]
+        $result[^self.render[$data;../data/templates/packages/list.xsl]]
     }
 ###
 
 
 @showAction[id]
-    $doc[^xdoc::create[root]]
-    $root[^doc.selectSingle[//root]]
-
     $user[^self.security.getUser[]]
     ^connect[$MAIN:SQL.connect-string]{
         $packages[^hash::sql{
@@ -104,16 +76,6 @@ BaseController
         }
     }
 
-    $packageNode[^doc.createElement[package]]
-    $t[^root.appendChild[$packageNode]]
-    ^package.foreach[k;v]{
-        $el[^doc.createElement[$k]]
-        $el.nodeValue[$v]
-        $t[^packageNode.appendChild[$el]]
-    }
-    $versionsNode[^doc.createElement[versions]]
-    $t[^packageNode.appendChild[$versionsNode]]
-
     ^connect[$MAIN:SQL.connect-string]{
         $versions[^hash::sql{
             SELECT v.* FROM version as v
@@ -121,14 +83,12 @@ BaseController
         }]
     }
 
-    ^versions.foreach[versionId;version]{
-        $el[^doc.createElement[version]]
-        $el.nodeValue[$version.version]
-        $t[^versionsNode.appendChild[$el]]
-    }
+    $data[
+        $.package[$package]
+    ]
+    $data.package.versions[$versions]
 
-    $transformedDoc[^doc.transform[../data/templates/packages/show.xsl]]
-    $result[^if(!def $transformedDoc){}{^transformedDoc.string[$.method[html]]}]
+    $result[^self.render[$data;../data/templates/packages/show.xsl]]
 ###
 
 

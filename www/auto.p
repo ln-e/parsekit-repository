@@ -6,6 +6,9 @@
 
 @auto[]
     ^use[Debug.p]
+    ^use[xml.p]
+    ^use[web_document.p]
+    ^use[ref.p]
     ^use[App/DI/DI.p]
     ^use[App/Routing/Matcher.p]
     ^use[App/Routing/UrlGenerator.p]

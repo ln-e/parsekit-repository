@@ -25,29 +25,16 @@ BaseController
     ^if(!^self.security.isGranted[ROLE_ADMIN]){
         ^self.redirect[/login]
     }{
-        $result[]
-        $doc[^xdoc::create[root]]
-        $root[^doc.selectSingle[//root]]
-        $usersNode[^doc.createElement[users]]
-        $t[^root.appendChild[$usersNode]]
-
         ^connect[$MAIN:SQL.connect-string]{
             $users[^hash::sql{
                 SELECT u.id, u.* FROM user as u
             }[$.limit(10)]]
         }
 
-        ^users.foreach[key;value]{
-            $userNode[^doc.createElement[user]]
-            $t[^usersNode.appendChild[$userNode]]
-            ^value.foreach[k;v]{
-                $el[^doc.createElement[$k]]
-                $el.nodeValue[$v]
-                $t[^userNode.appendChild[$el]]
-            }
-        }
+        $data[
+            $.users[$users]
+        ]
 
-        $transformedDoc[^doc.transform[../data/templates/backend/user/index.xsl]]
-        $result[^if(!def $transformedDoc){}{^transformedDoc.string[$.method[html]]}]
+        $result[^self.render[$data;../data/templates/backend/user/index.xsl]]
     }
 ###

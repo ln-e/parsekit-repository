@@ -2,9 +2,10 @@
 
     <xsl:import href="../_base.xsl" />
 
+    <xsl:output indent="no" omit-xml-declaration="yes" method="html" />
+
     <xsl:template name="page_title">
-        <h1>
-          <xsl:value-of select="package/name"/></h1>
+        <h1><xsl:value-of select="package/name"/></h1>
     </xsl:template>
 
     <xsl:template name="body_inner">
@@ -40,7 +41,7 @@
                             <th>Versions</th>
                             <td>
                                 <ul>
-                                    <xsl:apply-templates select="package/versions/version" mode="versions" />
+                                    <xsl:apply-templates select="package/versions/item" mode="versions" />
                                 </ul>
                             </td>
                         </tr>
@@ -53,7 +54,7 @@
     </xsl:template>
 
 
-    <xsl:template match="version" mode="versions">
+    <xsl:template match="item" mode="versions">
         <li>
             <xsl:value-of select="."/>
         </li>

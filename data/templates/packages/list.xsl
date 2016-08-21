@@ -2,6 +2,9 @@
 
     <xsl:import href="../_base.xsl" />
 
+    <xsl:output indent="no" omit-xml-declaration="yes" method="html" />
+
+
     <xsl:template name="body_inner">
         <div class="uk-grid" data-uk-grid-margin="">
             <div class="uk-width-medium-1-1 uk-row-first">
@@ -18,7 +21,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <xsl:apply-templates select="packages/package" mode="packages_list" />
+                        <xsl:apply-templates select="packages/item" mode="packages_list" />
                     </tbody>
                 </table>
 
@@ -34,7 +37,7 @@
     </xsl:template>
 
 
-    <xsl:template match="package" mode="packages_list">
+    <xsl:template match="item" mode="packages_list">
         <tr>
             <td>
                 <xsl:value-of select="position()"/>

@@ -2,11 +2,11 @@
 
     <xsl:import href="../_base.xsl" />
 
+    <xsl:output indent="no" omit-xml-declaration="yes" method="html" />
+
 
     <xsl:template match="*" mode="body">
         <xsl:attribute name="class">uk-height-1-1</xsl:attribute>
-
-
 
         <div class="uk-vertical-align uk-text-center uk-height-1-1">
             <div class="uk-vertical-align-middle" style="width: 250px;">
@@ -31,7 +31,7 @@
                             <buton type="submit" class="uk-button uk-button-large">
                                 Login
                             </buton>
-                            <a href="https://github.com/login/oauth/authorize?scope=user:email,write:repo_hook&amp;client_id={github-client-id}" class="uk-button uk-button-large">
+                            <a href="https://github.com/login/oauth/authorize?scope=user:email,write:repo_hook&amp;client_id={github_client_id}" class="uk-button uk-button-large">
                                 <i class="uk-icon-github"/> Github
                             </a>
                         </div>

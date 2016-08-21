@@ -1,6 +1,6 @@
 # Copyright Art. Lebedev | http://www.artlebedev.ru/
 # Author: Vladimir Tokmakov | vlalek
-# Updated: 2015-06-03
+# Updated: 2015-07-08
 
 
 @CLASS
@@ -13,7 +13,7 @@ locals
 
 @auto[]
 $xml:now[^date::now[]]
-$xml:ncname_pattern[^regex::create[^^[^^-.:\d\s]+[^^:\s]*^$]]
+$xml:ncname_pattern[^regex::create[^^[_a-zA-Z][_a-zA-Z0-9]*^$]]
 
 
 @parse[xml]

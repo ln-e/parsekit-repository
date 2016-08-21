@@ -45,3 +45,19 @@ locals
         ]]
     }
 ###
+
+
+@render[data;template][result]
+    $web[^web_document::create[$data]]
+    $web.xsl_path[$template]
+
+    $result[^web.html[]]
+###
+
+
+@renderXML[data;template][result]
+    $web[^web_document::create[$data]]
+    $web.xsl_path[$template]
+
+    $result[^web.xml[]]
+###

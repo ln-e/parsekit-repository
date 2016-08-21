@@ -34,24 +34,19 @@ BaseController
     ^if(^self.security.isGranted[]){
         ^self.redirect[/package]
     }{
-        $doc[^xdoc::create[root]]
-        $root[^doc.selectSingle[//root]]
-        $githubNode[^doc.createElement[github-client-id]]
-        $t[^githubNode.appendChild[^doc.createTextNode[$MAIN:GithubClientId]]]
-        $t[^root.appendChild[$githubNode]]
+        $templateData[
+            $.github_client_id[$MAIN:GithubClientId]
+        ]
 
         ^if(!def $form:fields.code){
-            $transformedDoc[^doc.transform[../data/templates/user/login.xsl]]
+            $xslUrl[../data/templates/user/login.xsl]
         }{
             $data[^githubApi.getAccessToken[$form:fields.code]]
 
             ^if(def $data.error){
-                $error[^doc.createElement[error]]
-                $text[^doc.createTextNode[$data.error_description]]
-                $t[^error.appendChild[$text]]
-                $t[^root.appendChild[$error]]
+                $templateData.error[$data.error_description]
 
-                $transformedDoc[^doc.transform[../data/templates/auth.xsl]]
+                $xslUrl[../data/templates/auth.xsl]
             }{
                 $access_token[$data.access_token]
                 $self.githubApi.access_token[$access_token]
@@ -84,6 +79,6 @@ BaseController
         }
 
 
-        $result[^if(!def $transformedDoc){}{^transformedDoc.string[$.method[html]]}]
+        $result[^if(!def $xslUrl){}{^self.render[$templateData;$xslUrl]}]
     }
 ###

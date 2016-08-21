@@ -2,6 +2,8 @@
 
     <xsl:import href="../_base.xsl" />
 
+    <xsl:output indent="no" omit-xml-declaration="yes" method="html" />
+
 
     <xsl:template name="page_title">Last 10 added packages</xsl:template>
 
@@ -19,7 +21,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <xsl:apply-templates select="packages/package" mode="packages_list" />
+                        <xsl:apply-templates select="packages/item" mode="packages_list" />
                     </tbody>
                 </table>
             </div>
@@ -27,7 +29,7 @@
     </xsl:template>
 
 
-    <xsl:template match="package" mode="packages_list">
+    <xsl:template match="item" mode="packages_list">
         <tr>
             <td>
                 <a href="package/{id}">
