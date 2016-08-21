@@ -17,10 +17,11 @@ locals
 
 @create[routes]
     $self.routes[$routes]
+    $self.strictRequirements(true)
 ###
 
 
-@generate[name;params;referenceType][result]
+@generate[name;parameters;referenceType][result]
     ^if(!def $referenceType){
         $referenceType[$self.ABSOLUTE_PATH]
     }
@@ -39,10 +40,11 @@ locals
 
     ^if(!($requiredSchemes is hash)){ $requiredSchemes[^hash::create[]]}
     $mergedParams[^parameters.union[$defaults]]
-    $diff[^hash::create[$mergedParams]]
-    ^diff.sub[$variables]
+    $variables[^variables.foreach[key;value]{$.$value[$key]}] ^rem[ flip variables]
+    $diff[^hash::create[$variables]]
+    ^diff.sub[$mergedParams]
     ^if(^diff._count[] > 0){
-        ^throw[MissingMandatoryParametersException;;Some mandatory parameters are missing ("^diff.foreach[$key;$value]{$key}[, ]") to generate a URL for route "$name"]
+        ^throw[MissingMandatoryParametersException;;Some mandatory parameters are missing ("^diff.foreach[key;value]{$key}[, ]") to generate a URL for route "$name"]
     }
 
     $url[]
@@ -51,20 +53,20 @@ locals
         ^if('variable' eq $token.0){
             ^if(
                 !$optional
-                || !^defaults.containts[$token.3]
+                || !^defaults.contains[$token.3]
                 || !def $mergedParams.[$token.3]
                 && $mergedParams.[$token.3] eq $defaults.[$token.3]
             ){
                 ^if(def $self.strictRequirements && ^mergedParams.[$token.3].match[^^$token.2^$][in] <=0){
                     ^if($self.strictRequirements){
-                        ^throw[InvalidParameterException;;^self.generateErrorMessage[$token.3;$name;$token.2;$mergedParams[$token.3]]]
+                        ^throw[InvalidParameterException;;^self.generateErrorMessage[$token.3;$name;$token.2;$mergedParams.[$token.3]]]
                     }
                     ^continue[]
                 }
                 $url[${token.1}${mergedParams.[$token.3]}$url]
                 $optional(false)
             }
-            ^throw[NotImplementedYet]
+#            ^throw[NotImplementedYet]
         }{
 #           static text
             $url[${token.1}$url]
@@ -76,6 +78,7 @@ locals
         $url[/]
     }
 
+    ^dstop[$url]
 
     $schemeAuthority[]
     $host[$env:fields.SERVER_NAME]
@@ -93,7 +96,7 @@ locals
                 ^if(variable eq $token.0) {
                     ^if(def $self.strictRequirements && ^mergedParams.[$token.3].match[^^$token.2^$][in] <=0){
                         ^if($self.strictRequirements){
-                            ^throw[InvalidParameterException;;^self.generateErrorMessage[$token.3;$name;$token.2;$mergedParams[$token.3]]]
+                            ^throw[InvalidParameterException;;^self.generateErrorMessage[$token.3;$name;$token.2;$mergedParams.[$token.3]]]
                         }
                         ^continue[]
                     }
@@ -140,9 +143,9 @@ locals
 @generateErrorMessage[parameter;route;expected;given][result]
     $message[Parameter "{parameter}" for route "{route}" must match "{expected}" ("{given}" given) to generate a corresponding URL.]
 
-    $result[$message.replace[^table::create{from	to
+    $result[^message.replace[^table::create{from	to
 {parameter}	$parameter
 {route}	$route
 {expected}	$expected
-{given}	$mergedParams[$given]}]]
+{given}	$given}]]
 ###

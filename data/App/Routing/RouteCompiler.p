@@ -49,7 +49,17 @@ locals
     $regex[$tempResult.regex]
     $matchesOrder[$tempResult.matchesOrder]
 
-    $result[^CompiledRoute::create[$staticPrefix;$regex;$tokens;$pathVariables;$hostRegex;$hostTokens;$hostVariables;$variables;$matchesOrder;$hostMatchesOrder]]
+    $result[^CompiledRoute::create[
+        $staticPrefix;
+        $regex;
+        $tokens;
+        $pathVariables;
+        $hostRegex;
+        $hostTokens;
+        $hostVariables;
+        $variables;
+        $matchesOrder;
+        $hostMatchesOrder]]
 ###
 
 
@@ -136,7 +146,10 @@ locals
         $.staticPrefix[^if($tokens.0.0 eq text){$tokens.0.1}{}]
         $.regex[^^$regexp^$]
         $.regexModifiers[s^if($isHost){i}{}]
-        $.tokens[array_reverse($tokens)]
+        $.tokens[^for[ind](0;^tokens._count[]-1){
+            $newInd(^tokens._count[] - $ind - 1)
+            $.$ind[$tokens.$newInd]
+        }] ^rem[reverse tokens]
         $.variables[$variables]
         $.matchesOrder[$matchesOrder]
     ]
