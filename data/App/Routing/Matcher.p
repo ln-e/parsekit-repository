@@ -82,12 +82,12 @@ locals
 #       check HTTP method requirement
         ^if(def $route.methods){
 #           HEAD and GET are equivalent as per RFC
-            $method[$request:method]
+            $method[$env:method]
             ^if(HEAD eq $method){
                 $method[GET]
             }
-            ^if(!^requiredMethods.contains[$method]){
-                ^self.allow.add[$requiredMethods]
+            ^if(!^route.methods.contains[$method]){
+                ^self.allow.add[$route.methods]
                 ^continue[]
             }
         }

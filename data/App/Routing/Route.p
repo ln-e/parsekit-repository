@@ -42,6 +42,12 @@ locals
     $result[$self.compiled]
 ###
 
+
 @hasDefault[name][result]
     $result[^self.defaults.contains[$name]]
+###
+
+
+@hasScheme[scheme][result]
+    $result(def $self.schemes && ^self.schemes.contains[$scheme])
 ###

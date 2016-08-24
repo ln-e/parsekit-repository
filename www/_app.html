@@ -3,7 +3,7 @@ $MAIN:protocol(1)
 
 $routes[
     $.package_all[^Route::create[/;
-        $.controller[PackagesController] $.action[all]
+        $.controller[PackagesController] $.action[all];;;$.http[]
     ]]
     $.migrate[^Route::create[/migrate;
         $.controller[MigrationController] $.action[migrate]
