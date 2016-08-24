@@ -14,19 +14,21 @@ locals
 ###
 
 
-@create[path;defaults;requirements;methods]
+@create[path;defaults;requirements;methods;schemes]
     ^if(
         !def $path || !($path is string) ||
         (def $defaults && !($defaults is hash)) ||
         (def $requirements && !($requirements is hash)) ||
-        (def $methods && !($methods is hash))
+        (def $methods && !($methods is hash)) ||
+        (def $schemes && !($schemes is hash))
     ){
-        ^throw[InvalidArgumentException;;Route accept string^;hash^;hash^;hash arguments]
+        ^throw[InvalidArgumentException;;Route accept string^;hash^;hash^;hash^;hash arguments]
     }
     $self.path[$path]
     $self.defaults[$defaults]
     $self.requirements[$requirements]
     $self.methods[$methods]
+    $self.schemes[$schemes]
     $self.compiled[]
 ###
 

@@ -49,17 +49,7 @@ locals
     $regex[$tempResult.regex]
     $matchesOrder[$tempResult.matchesOrder]
 
-    $result[^CompiledRoute::create[
-        $staticPrefix;
-        $regex;
-        $tokens;
-        $pathVariables;
-        $hostRegex;
-        $hostTokens;
-        $hostVariables;
-        $variables;
-        $matchesOrder;
-        $hostMatchesOrder]]
+    $result[^CompiledRoute::create[$staticPrefix;$regex;$tokens;$pathVariables;$hostRegex;$hostTokens;$hostVariables;$variables;$matchesOrder;$hostMatchesOrder]]
 ###
 
 

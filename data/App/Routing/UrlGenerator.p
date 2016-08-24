@@ -11,7 +11,14 @@ UrlGenerator
 locals
 
 @auto[]
-    $self.ABSOLUTE_PATH(0)
+#   i.e. http://domain.ru/dir/file
+    $self.ABSOLUTE_URL(0)
+#   i.e. /dir/file
+    $self.ABSOLUTE_PATH(1)
+#   i.e. ../parent-file
+    $self.RELATIVE_PATH(2)
+#   i.e. //example.com/dir/file
+    $self.NETWORK_PATH(3)
 ###
 
 
@@ -36,8 +43,6 @@ locals
 
 
 @doGenerate[variables;defaults;requirements;tokens;parameters;name;referenceType;hostTokens;requiredSchemes]
-    ^throw[NotImplementedYet]
-
     ^if(!($requiredSchemes is hash)){ $requiredSchemes[^hash::create[]]}
     $mergedParams[^parameters.union[$defaults]]
     $variables[^variables.foreach[key;value]{$.$value[$key]}] ^rem[ flip variables]
@@ -66,7 +71,6 @@ locals
                 $url[${token.1}${mergedParams.[$token.3]}$url]
                 $optional(false)
             }
-#            ^throw[NotImplementedYet]
         }{
 #           static text
             $url[${token.1}$url]
@@ -78,8 +82,6 @@ locals
         $url[/]
     }
 
-    ^dstop[$url]
-
     $schemeAuthority[]
     $host[$env:fields.SERVER_NAME]
     ^if(def $host){
@@ -88,6 +90,7 @@ locals
         ^if($requiredSchemes is hash && def $requiredSchemes){
             if (!^requiredSchemes.contains[$scheme]) {
                 $referenceType[$self.ABSOLUTE_URL]
+                $scheme[^requiredSchemes._at[first]]
             }
         }
         ^if(def $hostTokens && $hostTokens is hash){
@@ -108,12 +111,17 @@ locals
             }
             ^if($routeHost ne $host){
                 $host[$routeHost]
+#                ^if(http eq $scheme && 80 ne $env:SERVER_PORT){
+#                    $port[:$env:SERVER_PORT] ^rem[$this->context->getHttpPort()]
+#                }(https eq $scheme && 443 ne $env:SERVER_PORT){
+#                    $port[:$env:SERVER_PORT] ^rem[$this->context->getHttpsPort()]
+#                }
                 ^if($self.ABSOLUTE_URL ne $referenceType){
                     $referenceType[$self.NETWORK_PATH]
                 }
             }
         }
-        ^if($self.ABSOLUTE_URL eq $referenceType || $self.NETWORK_PATH eq $referenceType) {
+        ^if($self.ABSOLUTE_URL eq $referenceType || $self.NETWORK_PATH eq $referenceType){
             $port[]
 #           TODO ADD routecontext which holds custom http and https ports
             $schemeAuthority[^if($self.NETWORK_PATH ne $referenceType){$scheme^:}//${host}$port]
@@ -132,7 +140,7 @@ locals
     ^extra.sub[$defaults]
 
     ^if($extra){
-        $query[^extra.foreach[ekey;evalue]{$ekey=^taint[uri][$evalue]}[&]]
+        $query[^extra.foreach[ekey;evalue]{$ekey^if(def $evalue){=^taint[uri][$evalue]}}[&]]
         $url[${url}?$query]
     }
 
@@ -148,4 +156,66 @@ locals
 {route}	$route
 {expected}	$expected
 {given}	$given}]]
+###
+
+
+
+# Returns the target path as relative reference from the base path.
+#
+# Only the URIs path component (no schema, host etc.) is relevant and must be given, starting with a slash.
+# Both paths must be absolute and not contain relative parts.
+# Relative URLs from one resource to another are useful when generating self-contained downloadable document archives.
+# Furthermore, they can be used to reduce the link size in documents.
+#
+# Example target paths, given a base path of "/a/b/c/d":
+# - "/a/b/c/d"     -> ""
+# - "/a/b/c/"      -> "./"
+# - "/a/b/"        -> "../"
+# - "/a/b/c/other" -> "other"
+# - "/a/x/y"       -> "../../x/y"
+#
+#:param basePath string The base path
+#:param targetPath string The target path
+#
+#:result string The relative target path
+@getRelativePath[basePath;targetPath][result]
+    $result[]
+    ^if($basePath ne $targetPath){
+        $t[^if(^basePath.mid(0;1) eq '/'){^basePath.mid(1;^basePath.length[]-1)}{$basePath}]
+        $t[^t.match[\/[^^\/]+^$][i][]]
+        $sourceDirs[^t.split[/]]
+
+        $t[^if(^targetPath.mid(0;1) eq '/'){^targetPath.mid(1;^targetPath.length[]-1)}{$targetPath}]
+        $targetFile[^t.match[\/([^^\/]+)^$][i]]
+        $targetFile[$targetFile.1]
+
+        $t[^t.match[\/[^^\/]+^$][i][]]
+        $targetDirs[^t.split[/]]
+
+        $startIndex(0)
+        ^sourceDirs.foreach[index;row]{
+            ^targetDirs.offset[set]($index)
+
+            ^if(^targetDirs.offset[] ne $index || $row.piece ne $targetDirs.piece){
+                ^break[]
+            }{
+                $startIndex($index)
+            }
+        }
+        $str[]
+        ^for[i](1;^sourceDirs.count[] - $startIndex - 1){
+            $str[${str}../]
+        }
+
+        ^targetDirs.append[$targetFile]
+        $path[$str^targetDirs.foreach[index;row]{^if($index > $startIndex){$row.piece}}[/]]
+
+        $colonPos[^path.pos[:]]
+        $slashPos[^path.pos[/]]
+        ^if($path eq '' || ^path.mid(0;1) eq '/' || $colonPos > -1 && ($colonPos < $slashPos || $slashPos eq -1)){
+            $result[./$path]
+        }{
+            $result[$path]
+        }
+    }
 ###
