@@ -5,9 +5,5 @@
 # To change this template use File | Settings | File Templates.
 
 @auto[]
-###
-
-
-@autouse[className]
-	^use[${className}.p]
+    ^use[/../vault/classpath.p]
 ###

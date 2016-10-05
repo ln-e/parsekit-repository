@@ -5,3 +5,4 @@ data/*.pag
 www/**/*.json
 !*.example
 debug.htm
+vault/
