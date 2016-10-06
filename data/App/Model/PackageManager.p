@@ -86,7 +86,13 @@ locals
 #           if not changed ref then do not update
             $fileData.packages.[$package.name].$version[$oldFileData.packages.[$package.name].$version]
         }{
-            $fileData.packages.[$package.name].$version[^self.createPackageConfig[$hookData;$package.name;$sha;$version]]
+            ^try{
+                $fileData.packages.[$package.name].$version[^self.createPackageConfig[$hookData;$package.name;$sha;$version]]
+            }{
+              ^if($exception.type eq NoParsekitFileException){
+                  $exception.handled(true)
+              }
+            }
         }
     }
 
@@ -128,8 +134,10 @@ locals
 
 
 @createPackageConfig[hookData;packageName;sha;version][result]
-    $parsekitConfig[^self.githubApi.getParsekitFile[$packageName;$sha]]
+    $parsekitConfig[^self.githubApi.getParsekitFile[$hookData.repository.full_name;$sha]]
     $parsekitConfig.name[$packageName]
+    $parsekitConfig.repository_url[$hookData.repository.html_url]
+    $parsekitConfig.repository_name[$hookData.repository.full_name]
     $parsekitConfig.target_dir[$packageName]
     $parsekitConfig.uid(1)
     $parsekitConfig.version[^if($version eq master]){dev-master}{$version}]
@@ -166,6 +174,6 @@ locals
 
 @generateInsertValues[package;packages;version][result]
     $result[^packages.foreach[packageVersion;value]{^if(!def $version || $packageVersion eq $version){
-        ('$package.id', '$value.version', '$package.name', '$value.type', '$value.description', '$value.class_path', '$value.sourceUrl', '$value.sourceType', '$value.sourceReference', '$value.distUrl', '$value.distType', '$value.distReference', '^json:string[^self.githubApi.getParsekitFile[$package.name;$value.sourceReference]]]')
+        ('$package.id', '$value.version', '$package.name', '$value.type', '$value.description', '$value.class_path', '$value.sourceUrl', '$value.sourceType', '$value.sourceReference', '$value.distUrl', '$value.distType', '$value.distReference', '^json:string[^self.githubApi.getParsekitFile[$package.repository_name;$value.sourceReference]]]')
     }}[,]]
 ###

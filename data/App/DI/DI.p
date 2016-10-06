@@ -10,15 +10,6 @@ DI
 @OPTIONS
 locals
 
-@USE
-Service.p
-App/Model/Session.p
-App/Model/Security.p
-App/Model/GithubApi.p
-App/Model/PackageManager.p
-App/Model/ProviderManager.p
-
-
 
 #------------------------------------------------------------------------------
 #Dummiest mock for future di container implementation

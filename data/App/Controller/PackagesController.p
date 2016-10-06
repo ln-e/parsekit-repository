@@ -129,23 +129,25 @@ BaseController
         ^self.redirect[/login]
     }{
         $user[^self.security.getUser[]]
-        $packageName[^taint[as-is][$form:fields.package]]
-        $hookData[^self.githubApi.createRepoHook[$packageName]]
-        $parsekit[^self.githubApi.getParsekitFile[$packageName;master]]
+        $repoName[^taint[as-is][$form:fields.package]]
+        $hookData[^self.githubApi.createRepoHook[$repoName]]
+        $parsekit[^self.githubApi.getParsekitFile[$repoName;master]]
 
         ^if(!def $hookData.id){
             ^throw[CouldNotCreateHookException;;Hook creation failed: ^json:string[$hookData]]
         }
 
-        $readmeFile[^self.githubApi.getSourceFile[$packageName;master;README.md]]
+        $readmeFile[^self.githubApi.getSourceFile[$repoName;master;README.md]]
 
         ^connect[$MAIN:SQL.connect-string]{
-            $packageName[^if(!def $parsekit.name || ^parsekit.name.trim[] eq ''){$packageName}{$parsekit.name}]
+            $packageName[^if(!def $parsekit.name || ^parsekit.name.trim[] eq ''){$repoName}{$parsekit.name}]
             $r[^void:sql{
-                INSERT INTO package(hook_id,name,target_dir,type,description,keywords,readme)
+                INSERT INTO package(hook_id,name,repository_url,repository_name,target_dir,type,description,keywords,readme)
                 VALUES(
                     $hookData.id,
                     '$packageName',
+                    'https://github.com/$repoName',
+                    '$repoName',
                     '$packageName',
                     '$parsekit.type',
                     '$parsekit.description',

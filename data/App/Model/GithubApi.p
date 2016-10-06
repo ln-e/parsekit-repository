@@ -28,8 +28,13 @@ locals
 @getParsekitFile[repoName;sha][result]
     $key[${repoName}$sha]
     ^if(!^self.parsekitFileCache.contains[$key]){
-        $file[^self.getSourceFile[$repoName;$sha;parsekit.json]]
-        $self.parsekitFileCache.$key[^self.decodeFile[$file]]
+        ^try{
+            $file[^self.getSourceFile[$repoName;$sha;parsekit.json]]
+            $self.parsekitFileCache.$key[^self.decodeFile[$file]]
+        }{
+            $exception.handled(true)
+            ^throw[NoParsekitFileException;;Could not get parsekit.json file for "$repoName" at "$sha"]
+        }
     }
     $result[$self.parsekitFileCache.$key]
 ###

@@ -140,16 +140,15 @@ BaseController
 
 @checkAllPackageVersionAction[]
     $data[^json:parse[^taint[as-is][$request:body]]]
-    $packageName[$data.repository.full_name]
+    $repoName[$data.repository.full_name]
 
     ^connect[$MAIN:SQL.connect-string]{
         $package[^table::sql{
-            SELECT * FROM package WHERE package.name = '$packageName'
+            SELECT * FROM package WHERE package.repository_name = '$repoName'
         }[$.limit(1)]]
 
-
         ^if(!($package is table && def $package)){
-            ^throw[UnregistredHookException;;Package "$packageName" was not registred in parsekit repostiory.]
+            ^throw[UnregistredHookException;;Repository "$repoName" was not registred as parsekit package.]
         }
     }
 
