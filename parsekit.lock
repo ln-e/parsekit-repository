@@ -4,7 +4,37 @@
 	"type":"project",
 	"stability":null,
 	"uniqueName":"parsekit\/parsekit-repository",
-	"packages":{},
+	"packages":{
+		"als\/fs":{
+			"name":"als\/fs",
+			"type":"library",
+			"targetDir":"als\/fs",
+			"sourceType":"git",
+			"sourceUrl":"https:\/\/github.com\/ln-e\/fs.git",
+			"sourceReference":"63c139361f31efc664c0c44885f0469e8b6f7275",
+			"distType":"zip",
+			"distUrl":"https:\/\/api.github.com\/repos\/als\/fs\/zipball\/63c139361f31efc664c0c44885f0469e8b6f7275",
+			"distReference":"63c139361f31efc664c0c44885f0469e8b6f7275",
+			"version":"master",
+			"prettyVersion":"master",
+			"releaseDate":null,
+			"stability":null,
+			"requiredPackages":{},
+			"requires":{},
+			"conflicts":{},
+			"devRequires":{},
+			"classPath":{},
+			"autoload":{
+				"namespace":{
+					"als\/fs":"src"
+				}
+			},
+			"mainFileDir":null,
+			"docRoot":"www",
+			"repository":null,
+			"uniqueName":"als\/fsmaster"
+		}
+	},
 	"releaseDate":"1475697158",
-	"updated":"1475697159"
+	"updated":"1475783908"
 }

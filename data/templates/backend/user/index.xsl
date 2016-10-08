@@ -7,20 +7,18 @@
     <xsl:template name="page_title">Users</xsl:template>
 
     <xsl:template name="body_inner">
-        <div class="uk-grid" data-uk-grid-margin="">
-            <div class="uk-width-medium-1-1 uk-row-first">
-                <table class="uk-table">
-                    <thead>
-                        <tr>
-                            <th>id</th>
-                            <th>email</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <xsl:apply-templates select="users/item" mode="users_list" />
-                    </tbody>
-                </table>
-            </div>
+        <div>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <xsl:apply-templates select="users/item" mode="users_list" />
+                </tbody>
+            </table>
         </div>
     </xsl:template>
 

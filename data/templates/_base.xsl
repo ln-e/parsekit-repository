@@ -5,6 +5,7 @@
     <xsl:template match="/">
         <html>
             <head>
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <title>parsekit.ru - package manager</title>
                 <xsl:apply-templates select="." mode="scripts" />
             </head>
@@ -16,23 +17,21 @@
 
 
     <xsl:template match="*" mode="scripts">
-        <script src="//code.jquery.com/jquery-1.12.3.min.js"/>
-        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/uikit/2.26.2/css/uikit.min.css" />
-        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/uikit/2.26.2/css/uikit.almost-flat.css" />
-        <script src="//cdnjs.cloudflare.com/ajax/libs/uikit/2.26.2/js/uikit.min.js"/>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" />
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" />
+        <link rel="stylesheet" href="/style.css" />
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
     </xsl:template>
 
 
     <xsl:template match="*" mode="body">
-        <div class="uk-container uk-container-center uk-margin-top uk-margin-large-bottom">
+        <xsl:call-template name="nav"/>
 
-            <xsl:call-template name="nav"/>
-
-            <div class="uk-grid" data-uk-grid-margin="">
-                <div class="uk-width-1-1 uk-row-first">
-                    <h1 class="uk-heading-large"><xsl:call-template name="page_title"/></h1>
-                    <p class="uk-text-large"><xsl:call-template name="page_title_description"/></p>
-                </div>
+        <div class="container">
+            <div class="page-header">
+                <h1><xsl:call-template name="page_title"/></h1>
+                <p class="lead"><xsl:call-template name="page_title_description"/></p>
             </div>
 
             <xsl:call-template name="body_inner"/>
@@ -48,21 +47,25 @@
 
 
     <xsl:template name="nav">
-        <nav class="uk-navbar uk-margin-large-bottom">
-            <a class="uk-navbar-brand uk-hidden-small" href="/">Parsekit</a>
-            <ul class="uk-navbar-nav uk-hidden-small">
-                <li>
-                    <a href="/package">My packages</a>
-                </li>
-                <li>
-                    <a href="/login">Login</a>
-                </li>
-                <li>
-                    <a href="/logout">Logout</a>
-                </li>
-            </ul>
-            <a href="#offcanvas" class="uk-navbar-toggle uk-visible-small" data-uk-offcanvas=""></a>
-            <div class="uk-navbar-brand uk-navbar-center uk-visible-small">Parsekit</div>
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"/>
+                        <span class="icon-bar"/>
+                        <span class="icon-bar"/>
+                    </button>
+                    <a class="navbar-brand" href="/">Parsekit</a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="height: 1px;">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/package">My packages</a></li>
+                        <li><a href="/login">Login</a></li>
+                        <li><a href="/logout">Logout</a></li>
+                    </ul>
+                </div><!--/.nav-collapse -->
+            </div>
         </nav>
     </xsl:template>
 

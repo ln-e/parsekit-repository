@@ -9,22 +9,20 @@
 
 
     <xsl:template name="body_inner">
-        <div class="uk-grid" data-uk-grid-margin="">
-            <div class="uk-width-medium-1-1 uk-row-first">
-                <table class="uk-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Type</th>
-                            <th>Description</th>
-                            <th>Keywords</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <xsl:apply-templates select="packages/item" mode="packages_list" />
-                    </tbody>
-                </table>
-            </div>
+        <div>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Keywords</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <xsl:apply-templates select="packages/item" mode="packages_list" />
+                </tbody>
+            </table>
         </div>
     </xsl:template>
 

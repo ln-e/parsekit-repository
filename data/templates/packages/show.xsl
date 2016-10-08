@@ -9,47 +9,45 @@
     </xsl:template>
 
     <xsl:template name="body_inner">
-        <div class="uk-grid" data-uk-grid-margin="">
-            <div class="uk-width-medium-1-1 uk-row-first">
-                <table class="uk-table">
-                    <body>
-                        <tr>
-                            <th>Name</th>
-                            <td><xsl:value-of select="package/name" /></td>
-                        </tr>
-                        <tr>
-                            <th>Type</th>
-                            <td><xsl:value-of select="package/type" /></td>
-                        </tr>
-                        <tr>
-                            <th>Description</th>
-                            <td><xsl:value-of select="package/descirption" /></td>
-                        </tr>
-                        <tr>
-                            <th>Keywords</th>
-                            <td><xsl:value-of select="package/keywords" /></td>
-                        </tr>
-                        <tr>
-                            <th>Installs</th>
-                            <td><xsl:value-of select="package/installs" /></td>
-                        </tr>
-                        <tr>
-                            <th>Created at</th>
-                            <td><xsl:value-of select="package/created_at" /></td>
-                        </tr>
-                        <tr>
-                            <th>Versions</th>
-                            <td>
-                                <ul>
-                                    <xsl:apply-templates select="package/versions/item" mode="versions" />
-                                </ul>
-                            </td>
-                        </tr>
-                    </body>
-                </table>
+        <div>
+            <table class="table">
+                <body>
+                    <tr>
+                        <th>Name</th>
+                        <td><xsl:value-of select="package/name" /></td>
+                    </tr>
+                    <tr>
+                        <th>Type</th>
+                        <td><xsl:value-of select="package/type" /></td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td><xsl:value-of select="package/descirption" /></td>
+                    </tr>
+                    <tr>
+                        <th>Keywords</th>
+                        <td><xsl:value-of select="package/keywords" /></td>
+                    </tr>
+                    <tr>
+                        <th>Installs</th>
+                        <td><xsl:value-of select="package/installs" /></td>
+                    </tr>
+                    <tr>
+                        <th>Created at</th>
+                        <td><xsl:value-of select="package/created_at" /></td>
+                    </tr>
+                    <tr>
+                        <th>Versions</th>
+                        <td>
+                            <ul>
+                                <xsl:apply-templates select="package/versions/item" mode="versions" />
+                            </ul>
+                        </td>
+                    </tr>
+                </body>
+            </table>
 
-                <a href="/">Back to main page</a>
-            </div>
+            <a href="/">Back to main page</a>
         </div>
     </xsl:template>
 
