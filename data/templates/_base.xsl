@@ -60,6 +60,7 @@
                 </div>
                 <div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="height: 1px;">
                     <ul class="nav navbar-nav">
+                        <li><a href="/download">Downloads</a></li>
                         <li><a href="/package">My packages</a></li>
                         <li><a href="/login">Login</a></li>
                         <li><a href="/logout">Logout</a></li>

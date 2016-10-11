@@ -3,6 +3,8 @@ data/.htpasswd
 data/*.dir
 data/*.pag
 www/**/*.json
+www/dists/*
+!.gitkeep
 !*.example
 debug.htm
 vault/

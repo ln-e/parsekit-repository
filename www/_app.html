@@ -35,6 +35,9 @@ $routes[
         $.controller[PackagesController] $.action[add]
     ]]
 
+    $.download[^Route::create[/download;
+        $.controller[StaticController] $.action[download]
+    ]]
 
     $.users_add[^Route::create[/backend/user;
         $.controller[BackendController] $.action[userIndex]
