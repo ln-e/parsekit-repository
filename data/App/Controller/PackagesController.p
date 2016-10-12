@@ -21,6 +21,7 @@ BaseController
     $self.security[$DI:security]
     $self.githubApi[$DI:githubApi]
     $self.providerManager[$DI:providerManager]
+    $self.packageManager[$DI:packageManager]
 ###
 
 
@@ -61,6 +62,28 @@ BaseController
 ###
 
 
+@deleteAction[id]
+    ^if(!^self.security.isGranted[ROLE_ADMIN]){
+        ^self.redirect[^self.generateUrl[package_show;$.id[$id]]]
+    }{
+
+        ^connect[$MAIN:SQL.connect-string]{
+            $package[^hash::sql{
+                SELECT p.id, p.* FROM package as p
+                WHERE p.id = $id
+            }]
+            $packages[^void:sql{
+                DELETE FROM package WHERE package.id = $id
+            }]
+
+            ^self.packageManager.removePackage[$package]
+        }
+
+        ^self.redirect[^self.generateUrl[package]]
+    }
+###
+
+
 @showAction[id]
     $user[^self.security.getUser[]]
     ^connect[$MAIN:SQL.connect-string]{
@@ -70,6 +93,8 @@ BaseController
         }]
 
         $package[^packages._at(0)]
+        $keys[^packages._keys[key]]
+        $package.id[$keys.key]
 
         ^if(!def $package){
             ^throw[NotFoundException;;Package with id "$id" not found]
@@ -87,6 +112,12 @@ BaseController
         $.package[$package]
     ]
     $data.package.versions[$versions]
+    ^use[Debug.p]
+
+    ^if(^self.security.isGranted[ROLE_ADMIN]){
+
+        $data.package.deleteUrl[^self.generateUrl[package_delete;$.id[$package.id]]]
+    }
 
     $result[^self.render[$data;../data/templates/packages/show.xsl]]
 ###

@@ -31,6 +31,10 @@ $routes[
         $.controller[PackagesController] $.action[show];
         $.id[\d+]
     ]]
+    $.package_delete[^Route::create[/package/{id}/delete;
+        $.controller[PackagesController] $.action[delete]
+        $.id[\d+]
+    ]]
     $.package_add[^Route::create[/package/add;
         $.controller[PackagesController] $.action[add]
     ]]
@@ -48,6 +52,7 @@ $routes[
 #^dstop[^generator.generate[package_show;$.id[123] $.extra[123]]]
 
 $matcher[^Matcher::create[$routes]]
+$DI:urlGenerator[^UrlGenerator::create[$routes]]
 
 
 $variables[^matcher.match[/$form:fields.request]]

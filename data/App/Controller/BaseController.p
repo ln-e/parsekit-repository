@@ -61,3 +61,8 @@ locals
 
     $result[^web.xml[]]
 ###
+
+
+@generateUrl[name;params][result]
+    ^DI:urlGenerator.generate[$name;$params]
+###

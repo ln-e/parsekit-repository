@@ -133,6 +133,22 @@ locals
 ###
 
 
+@removePackage[package]
+    $result[]
+    ^connect[$MAIN:SQL.connect-string]{
+        ^void:sql{
+            DELETE FROM version WHERE version.package_id = $package.id
+        }
+    }
+
+    ^if(-f '/p/${package.name}.json'){
+        ^file:delete['/p/${package.name}.json']
+    }
+
+    ^self.providerManager.dumpProvider[^self.providerManager.providerKeyByPackage[$package]]
+###
+
+
 @createPackageConfig[hookData;packageName;sha;version][result]
     $parsekitConfig[^self.githubApi.getParsekitFile[$hookData.repository.full_name;$sha]]
     $parsekitConfig.name[$packageName]

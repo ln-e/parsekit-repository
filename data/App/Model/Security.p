@@ -47,4 +47,5 @@ locals
 #       dirty hack
         $result($user.email eq bodnar_i@mail.ru)
     }
+#    $result(^MAIN:isDeveloper[])
 ###

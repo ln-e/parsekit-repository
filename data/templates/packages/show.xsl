@@ -48,6 +48,14 @@
             </table>
 
             <a href="/">Back to main page</a>
+
+            <br/><br/>
+
+            <xsl:if test="package/deleteUrl">
+                <div class="well">
+                    <a href="{package/deleteUrl}" class="btn btn-danger">Delete package</a>
+                </div>
+            </xsl:if>
         </div>
     </xsl:template>
 
