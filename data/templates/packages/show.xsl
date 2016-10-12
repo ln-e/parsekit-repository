@@ -62,7 +62,7 @@
 
     <xsl:template match="item" mode="versions">
         <li>
-            <xsl:value-of select="."/>
+            <xsl:value-of select="version"/> (<xsl:value-of select="source_reference"/>)
         </li>
     </xsl:template>
 

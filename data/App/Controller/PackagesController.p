@@ -112,10 +112,8 @@ BaseController
         $.package[$package]
     ]
     $data.package.versions[$versions]
-    ^use[Debug.p]
 
     ^if(^self.security.isGranted[ROLE_ADMIN]){
-
         $data.package.deleteUrl[^self.generateUrl[package_delete;$.id[$package.id]]]
     }
 
