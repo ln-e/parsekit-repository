@@ -38,18 +38,18 @@ BaseController
 @pushAction[][result]
     $data[^json:parse[^taint[as-is][$request:body]]]
 
-    $packageName[$data.repository.full_name]
+    $repoName[$data.repository.full_name]
     $sha[$data.after]
     $version[^data.ref.match[(refs\/(?:heads|tags)\/)][gi]{}]
 
     ^connect[$MAIN:SQL.connect-string]{
         $package[^table::sql{
-            SELECT * FROM package WHERE package.name = '$packageName'
+            SELECT * FROM package WHERE package.repository_name = '$repoName'
         }[$.limit(1)]]
 
 
         ^if(!($package is table && def $package)){
-            ^throw[UnregistredHookException;;Package '$packageName' was not registred in parsekit repostiory.]
+            ^throw[UnregistredHookException;;Package '$repoName' was not registred in parsekit repostiory.]
         }
     }
 
@@ -61,17 +61,17 @@ BaseController
 @createAction[][result]
     $data[^json:parse[^taint[as-is][$request:body]]]
 
-    $packageName[$data.repository.full_name]
+    $repoName[$data.repository.full_name]
     $version[$data.ref]
 
     ^connect[$MAIN:SQL.connect-string]{
         $package[^table::sql{
-            SELECT * FROM package WHERE package.name = '$packageName'
+            SELECT * FROM package WHERE package.repository_name = '$repoName'
         }[$.limit(1)]]
 
 
         ^if(!($package is table && def $package)){
-            ^throw[UnregistredHookException;;Package '$packageName' was not registred in parsekit repostiory.]
+            ^throw[UnregistredHookException;;Package '$repoName' was not registred in parsekit repostiory.]
         }
     }
 
@@ -94,18 +94,18 @@ BaseController
 @releaseAction[][result]
     $data[^json:parse[^taint[as-is][$request:body]]]
 
-    $packageName[$data.repository.full_name]
+    $repoName[$data.repository.full_name]
     $version[$data.release.tag_name]
 
     ^connect[$MAIN:SQL.connect-string]{
         $package[^table::sql{
-            SELECT * FROM package WHERE package.name = '$packageName'
+            SELECT * FROM package WHERE package.repository_name = '$repoName'
         }[$.limit(1)]]
 
         $package[$package.fields]
 
         ^if(!($package is hash && def $package)){
-            ^throw[UnregistredHookException;;Package '$packageName' was not registred in parsekit repostiory.]
+            ^throw[UnregistredHookException;;Package '$repoName' was not registred in parsekit repostiory.]
         }
     }
 
@@ -120,16 +120,16 @@ BaseController
 
 @deleteAction[]
     $data[^json:parse[^taint[as-is][$request:body]]]
-    $packageName[$data.repository.full_name]
+    $repoName[$data.repository.full_name]
 
     ^connect[$MAIN:SQL.connect-string]{
         $package[^table::sql{
-            SELECT * FROM package WHERE package.name = '$packageName'
+            SELECT * FROM package WHERE package.repository_name = '$repoName'
         }[$.limit(1)]]
 
 
         ^if(!($package is table && def $package)){
-            ^throw[UnregistredHookException;;Package '$packageName' was not registred in parsekit repostiory.]
+            ^throw[UnregistredHookException;;Package '$repoName' was not registred in parsekit repostiory.]
         }
     }
 
