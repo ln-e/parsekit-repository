@@ -5,36 +5,40 @@
 	"stability":null,
 	"uniqueName":"parsekit\/parsekit-repository",
 	"packages":{
-		"als\/fs":{
-			"name":"als\/fs",
+		"parsekit\/semver":{
+			"name":"parsekit\/semver",
 			"type":"library",
-			"targetDir":"als\/fs",
+			"targetDir":"parsekit\/semver",
 			"sourceType":"git",
-			"sourceUrl":"https:\/\/github.com\/ln-e\/fs.git",
-			"sourceReference":"63c139361f31efc664c0c44885f0469e8b6f7275",
+			"sourceUrl":"https:\/\/github.com\/ln-e\/parsekit-semver.git",
+			"sourceReference":"e6372388f22cdd6baa80a6a5134b89fe82eb387e",
 			"distType":"zip",
-			"distUrl":"https:\/\/api.github.com\/repos\/als\/fs\/zipball\/63c139361f31efc664c0c44885f0469e8b6f7275",
-			"distReference":"63c139361f31efc664c0c44885f0469e8b6f7275",
+			"distUrl":"https:\/\/api.github.com\/repos\/parsekit\/semver\/zipball\/e6372388f22cdd6baa80a6a5134b89fe82eb387e",
+			"distReference":"e6372388f22cdd6baa80a6a5134b89fe82eb387e",
 			"version":"master",
-			"prettyVersion":"master",
+			"normilizedVersion":"9999999-dev",
 			"releaseDate":null,
-			"stability":null,
+			"minimumStability":"dev",
+			"stability":"dev",
 			"requiredPackages":{},
-			"requires":{},
-			"conflicts":{},
-			"devRequires":{},
-			"classPath":{},
+			"require":{
+				"parser":">=3.4.3"
+			},
+			"conflict":{},
+			"devRequire":{},
 			"autoload":{
 				"namespace":{
-					"als\/fs":"src"
+					"Parsekit\/Semver":"src"
 				}
 			},
-			"mainFileDir":null,
-			"docRoot":"www",
+			"devAutoload":{},
+			"aliases":{},
+			"dynamicDocRoot":false,
+			"docRoot":".\/",
 			"repository":null,
-			"uniqueName":"als\/fsmaster"
+			"uniqueName":"parsekit\/semvermaster"
 		}
 	},
 	"releaseDate":"1475697158",
-	"updated":"1475783908"
+	"updated":"1480547542"
 }

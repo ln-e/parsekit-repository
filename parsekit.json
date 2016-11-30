@@ -1,15 +1,16 @@
 {
-	"name":"parsekit/parsekit-repository",
+	"name":"parsekit\/parsekit-repository",
 	"type":"project",
 	"description":"Main parsekit project repository",
 	"require":{
-		"parser":">=3.4.3"
+		"parser":">=3.4.3",
+		"parsekit\/semver":"*"
 	},
-	"docroot": "www",
-	"autoload": {
-		"nestedClasspath": [
-			"data/App",
-			"data/classes"
-		]
+	"docroot":"www",
+	"autoload":{
+		"nestedClasspath":{
+			"0":"data\/App",
+			"1":"data\/classes"
+		}
 	}
 }
