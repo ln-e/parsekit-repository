@@ -19,7 +19,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <xsl:apply-templates select="dists/item" mode="dists_list" />
+                    <xsl:apply-templates select="dists/item" mode="dists_list" >
+                      <xsl:sort select="position()" data-type="number" order="descending"/>
+                    </xsl:apply-templates>
                     <xsl:if test="count(dists/item) = 0">
                         <td colspan="3">No downloads available</td>
                     </xsl:if>
